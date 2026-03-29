@@ -68,3 +68,58 @@ model Note {
   ... content(JSON/Markdown), backlinks[], projectIds[]
 }
 ```
+
+## Extensión 2026: Journal + Finance + Work + Contacts
+
+El modelo dejó de ser solamente un núcleo de productividad y conocimiento. `db/schema.sql` ahora incorpora cuatro bounded contexts adicionales:
+
+### 1. Journal
+- `journals`
+- `journal_entries`
+- `journal_entry_tags`
+- `journal_entry_resources`
+
+Esto separa la escritura narrativa del módulo general de notas y la conecta con áreas, proyectos, `daily_logs`, tags y recursos.
+
+### 2. CRM personal y relacional
+- `businesses`
+- `contacts`
+- `contact_interactions`
+
+Aquí aparecen dos conceptos nuevos:
+
+- la empresa o negocio como cuenta relacional persistente
+- la interacción como evento con historial y follow-up
+
+### 3. Trabajo que genera ingresos
+- `work_engagements`
+
+El engagement no reemplaza al proyecto. Lo complementa. El engagement representa la capa comercial o contractual; el proyecto representa la capa de ejecución interna.
+
+### 4. Finanzas y facturación
+- `financial_accounts`
+- `financial_categories`
+- `financial_transactions`
+- `account_balance_snapshots`
+- `recurring_financial_rules`
+- `invoices`
+- `invoice_line_items`
+- `invoice_transaction_links`
+
+Esto convierte el modelo en un ledger personal con capacidad de:
+
+- registrar fondos
+- categorizar movimientos
+- unir dinero con clientes y trabajos
+- manejar cuentas por cobrar
+- separar facturación de pagos reales
+
+## Idea central de la extensión
+La arquitectura ya no solo conecta conocimiento y ejecución. También conecta:
+
+- narrativa personal
+- relaciones profesionales
+- oportunidades comerciales
+- flujo de dinero
+
+Eso es importante porque la nueva prioridad de producto no es “agregar más tablas”, sino traducir estas relaciones nuevas a experiencia real sin perder la simplicidad del LifeOS original.

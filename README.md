@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LifeOS
 
-## Getting Started
+LifeOS es un sistema personal para capturar, organizar, ejecutar y revisar trabajo, conocimiento y recursos en un solo lugar. La app está construida con Next.js App Router, React 19 y Supabase sobre PostgreSQL.
 
-First, run the development server:
+## Estado actual
+El producto ya cubre una base usable:
+
+- autenticación con email y contraseña
+- dashboard con foco, hoy/semana e indicadores operativos
+- inbox y captura rápida
+- tareas y proyectos
+- áreas
+- notas y recursos
+- decision journal
+- review con lecturas de actividad reciente
+
+Además, `db/schema.sql` ya modela una segunda fase del producto con:
+
+- journals
+- finanzas personales
+- negocios y contactos
+- engagements de trabajo
+- facturas e interacciones
+
+Esa extensión todavía está principalmente en la base de datos y en la documentación de producto; su experiencia de UI se prioriza en [`doc/10-backlog.md`](./doc/10-backlog.md).
+
+La documentación de producto y prioridades vive en [`doc/`](./doc).
+
+## Documentos clave
+- [`doc/08-casos-de-uso.md`](./doc/08-casos-de-uso.md): visión funcional y casos de uso reales del sistema
+- [`doc/09-analisis-faltantes.md`](./doc/09-analisis-faltantes.md): estado actual, gaps y diferencias entre schema e implementación
+- [`doc/10-backlog.md`](./doc/10-backlog.md): backlog priorizado con foco en lo urgente
+- [`db/schema.sql`](./db/schema.sql): esquema de datos completo en Supabase/Postgres
+
+## Stack real del repo
+- Next.js `16.2.1`
+- React `19.2.4`
+- TypeScript
+- Supabase SSR + Supabase Auth
+- PostgreSQL con RLS
+- Tailwind CSS `v4`
+
+## Desarrollo local
+Instala dependencias y levanta el entorno:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+La app queda disponible en `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Notas de arquitectura
+- La autenticación y la protección de rutas pasan por [`src/proxy.ts`](./src/proxy.ts), siguiendo la convención `proxy` de Next.js 16.
+- Las lecturas del sistema viven en [`src/server/queries/lifeos.ts`](./src/server/queries/lifeos.ts).
+- Las mutaciones principales viven en [`src/server/actions/lifeos.ts`](./src/server/actions/lifeos.ts).
+- La captura global usa [`src/lib/actions/capture.ts`](./src/lib/actions/capture.ts).

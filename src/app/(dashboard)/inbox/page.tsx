@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ChevronRight, Sparkles } from "lucide-react";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { createTaskAction } from "@/server/actions/lifeos";
@@ -31,7 +30,7 @@ export default async function InboxPage() {
             Capture first. Decide later.
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-relaxed text-[var(--muted-foreground)]">
-            This view gathers what is not yet settled. It's not just a list: it's the zone where the system converts noise into clarity.
+            This view gathers what is not yet settled. It&apos;s not just a list: it&apos;s the zone where the system converts noise into clarity.
           </p>
 
           <form action={createTaskAction} className="mt-8 panel-quiet rounded-[28px] p-4">
@@ -138,7 +137,8 @@ export default async function InboxPage() {
               key={`${item.kind}-${item.id}`} 
               item={item} 
               kindCopy={KIND_COPY[item.kind] ?? "Process"} 
-              dateStr={formatDate(item.createdAt)} 
+              dateStr={formatDate(item.createdAt)}
+              projects={data.projects}
             />
           ))}
         </div>

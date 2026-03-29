@@ -6,6 +6,6 @@ export function Sidebar() {
 }
 
 async function SidebarContent() {
-  const { inboxCount } = await getSidebarData();
-  return <SidebarNav inboxCount={inboxCount} />;
+  const { inboxCount, profile } = await getSidebarData();
+  return <SidebarNav inboxCount={inboxCount} profile={profile} />;
 }

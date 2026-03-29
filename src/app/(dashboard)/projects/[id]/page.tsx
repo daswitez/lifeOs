@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, Plus, CheckCircle2, ChevronRight, CheckSquare } from "lucide-react";
+import { ChevronLeft, CheckCircle2, ChevronRight, CheckSquare } from "lucide-react";
 import { TASK_PRIORITIES, TASK_PRIORITY_LABELS, NOTE_TYPES, NOTE_TYPE_LABELS } from "@/lib/domain";
 import { CreateEntityModal } from "@/components/forms/create-entity-modal";
 import { createTaskAction, createNoteAction, updateTaskStatusAction } from "@/server/actions/lifeos";
@@ -8,6 +8,7 @@ import { getProjectDetailData, getAreasData } from "@/server/queries/lifeos";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { EditTaskModal } from "@/components/forms/edit-task-modal";
 import { EditProjectModal } from "@/components/forms/edit-project-modal";
+import { ManageResourceLinksModal } from "@/components/forms/manage-resource-links-modal";
 
 function formatDate(value: string | null) {
   if (!value) return "No date";
@@ -23,11 +24,11 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
   try {
     data = await getProjectDetailData(params.id);
     areasData = await getAreasData();
-  } catch (error) {
+  } catch {
     notFound();
   }
 
-  const { project, tasks, notes, resources } = data;
+  const { project, tasks, notes, resources, decisions } = data;
   const openTasks = tasks.filter(t => t.status !== "done" && t.status !== "archived" && t.status !== "cancelled");
   const closedTasks = tasks.filter(t => t.status === "done");
 
@@ -204,11 +205,18 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
                       <EditTaskModal task={{
                         id: task.id,
                         title: task.title,
+                        description: task.description,
                         status: task.status,
                         priority: task.priority,
                         dueDate: task.dueDate,
+                        scheduledFor: task.scheduledFor,
+                        energy: task.energy,
+                        estimatedMinutes: task.estimatedMinutes,
+                        actualMinutes: task.actualMinutes,
+                        isRecurring: task.isRecurring,
+                        recurrenceRule: task.recurrenceRule,
                         project_id: project.id
-                      }} projects={[{ id: project.id, title: project.title }]} />
+                      }} projects={[{ id: project.id, title: project.title }]} taskOptions={data.taskOptions} />
                     </div>
                   </div>
                 </article>
@@ -273,7 +281,7 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
                  <p className="text-sm text-[var(--muted-foreground)] italic">No notes linked yet.</p>
                ) : (
                  notes.map(note => (
-                   <Link key={note.id} href="/knowledge" className="panel-surface rounded-2xl p-4 transition-all hover:border-[var(--foreground)]/20 hover:-translate-y-0.5">
+                   <Link key={note.id} href={`/knowledge/${note.id}`} className="panel-surface rounded-2xl p-4 transition-all hover:border-[var(--foreground)]/20 hover:-translate-y-0.5">
                      <span className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)]">{note.type}</span>
                      <h3 className="mt-1 font-semibold text-[var(--foreground)]">{note.title}</h3>
                      <p className="mt-2 text-xs text-[var(--muted-foreground)] line-clamp-2">{note.preview}</p>
@@ -287,7 +295,15 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
           <div className="flex flex-col gap-5">
             <div className="flex items-center justify-between pb-2 border-b border-[var(--border)]">
               <h2 className="text-lg font-semibold text-[var(--foreground)]">Resources</h2>
-              <p className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider">Vault</p>
+              <ManageResourceLinksModal
+                entityType="project"
+                entityId={project.id}
+                entityTitle={project.title}
+                linkedResources={resources}
+                resourceOptions={data.resourceOptions}
+                triggerLabel="Attach resource"
+                compact
+              />
             </div>
             
             <div className="flex flex-col gap-3">
@@ -295,12 +311,56 @@ export default async function ProjectDetailPage({ params }: { params: { id: stri
                  <p className="text-sm text-[var(--muted-foreground)] italic">No resources attached.</p>
                ) : (
                  resources.map(res => (
-                   <a key={res.id} href={res.location!} target="_blank" rel="noreferrer" className="panel-quiet rounded-2xl p-4 flex flex-col gap-1 transition-colors hover:bg-[var(--foreground)]/5">
-                     <span className="text-sm font-medium text-[var(--foreground)] hover:underline">{res.title}</span>
+                   <div key={res.id} className="panel-quiet rounded-2xl p-4 flex flex-col gap-1 transition-colors hover:bg-[var(--foreground)]/5">
+                     <Link href={`/resources/${res.id}`} className="text-sm font-medium text-[var(--foreground)] hover:underline">
+                       {res.title}
+                     </Link>
                      {res.description && <span className="text-xs text-[var(--muted-foreground)] truncate">{res.description}</span>}
-                   </a>
+                     {res.location && (
+                       <a
+                         href={res.location}
+                         target="_blank"
+                         rel="noreferrer"
+                         className="text-xs text-[var(--muted-foreground)] underline-offset-4 hover:underline"
+                       >
+                         Open source
+                       </a>
+                     )}
+                   </div>
                  ))
                )}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-5">
+            <div className="flex items-center justify-between pb-2 border-b border-[var(--border)]">
+              <h2 className="text-lg font-semibold text-[var(--foreground)]">Decisions</h2>
+              <p className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider">Strategy</p>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              {decisions.length === 0 ? (
+                <p className="text-sm text-[var(--muted-foreground)] italic">No decisions linked yet.</p>
+              ) : (
+                decisions.map((decision) => (
+                  <Link
+                    key={decision.id}
+                    href={`/decisions/${decision.id}`}
+                    className="panel-surface rounded-2xl p-4 transition-all hover:border-[var(--foreground)]/20 hover:-translate-y-0.5"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="kicker-pill">{decision.status}</span>
+                      <span className="text-xs text-[var(--muted-foreground)]">
+                        {decision.reviewDate ? `Review ${formatDate(decision.reviewDate)}` : "No review date"}
+                      </span>
+                    </div>
+                    <h3 className="mt-3 font-semibold text-[var(--foreground)]">{decision.title}</h3>
+                    <p className="mt-2 text-xs text-[var(--muted-foreground)] line-clamp-2">
+                      {decision.expectedOutcome || "No expected outcome recorded yet."}
+                    </p>
+                  </Link>
+                ))
+              )}
             </div>
           </div>
 

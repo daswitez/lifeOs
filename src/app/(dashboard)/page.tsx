@@ -1,16 +1,25 @@
 import Link from "next/link";
 import {
+  CalendarClock,
+  Clock3,
   ChevronRight,
   Compass,
   Flame,
   Inbox,
   Library,
+  Repeat2,
   Sparkles,
   Target,
 } from "lucide-react";
-import { LOG_ENERGIES, LOG_ENERGY_LABELS } from "@/lib/domain";
+import {
+  LOG_ENERGIES,
+  LOG_ENERGY_LABELS,
+  TASK_PRIORITY_LABELS,
+  TASK_RECURRENCE_LABELS,
+  TASK_STATUS_LABELS,
+} from "@/lib/domain";
 import { SubmitButton } from "@/components/ui/submit-button";
-import { getDashboardData } from "@/server/queries/lifeos";
+import { type ActionTask, getDashboardData } from "@/server/queries/lifeos";
 import { upsertDailyLogAction } from "@/server/actions/lifeos";
 
 function formatLongDate(value: string | Date) {
@@ -28,6 +37,21 @@ function formatShortDate(value: string) {
   }).format(new Date(value));
 }
 
+function formatTaskTiming(task: ActionTask) {
+  if (task.scheduledFor) return `programada ${formatShortDate(task.scheduledFor)}`;
+  if (task.dueDate) return `vence ${formatShortDate(task.dueDate)}`;
+  return "sin fecha";
+}
+
+function recurrenceLabel(rule: string | null) {
+  if (!rule) return null;
+  const normalized = rule.trim().toLowerCase();
+  if (normalized in TASK_RECURRENCE_LABELS) {
+    return TASK_RECURRENCE_LABELS[normalized as keyof typeof TASK_RECURRENCE_LABELS];
+  }
+  return rule;
+}
+
 function greeting() {
   const hour = new Date().getHours();
   if (hour < 12) return "Buenos dias.";
@@ -39,6 +63,20 @@ export default async function DashboardPage() {
   const data = await getDashboardData();
 
   const workflow = [
+    {
+      label: "Hoy",
+      value: data.todayTasks.length,
+      detail: "tareas aterrizan hoy",
+      href: "/actions",
+      icon: CalendarClock,
+    },
+    {
+      label: "Esta Semana",
+      value: data.weekTasks.length,
+      detail: "cosas se acumulan esta semana",
+      href: "/actions",
+      icon: Clock3,
+    },
     {
       label: "Bandeja de Entrada",
       value: data.inboxCount,
@@ -54,18 +92,18 @@ export default async function DashboardPage() {
       icon: Flame,
     },
     {
-      label: "Proyectos en Curso",
-      value: data.activeProjectCount,
-      detail: "proyectos estan vivos",
-      href: "/projects",
-      icon: Target,
-    },
-    {
       label: "Decisiones Abiertas",
       value: data.openDecisionCount,
       detail: "decisiones abiertas",
       href: "/decisions",
       icon: Compass,
+    },
+    {
+      label: "Proyectos en Curso",
+      value: data.activeProjectCount,
+      detail: "proyectos estan vivos",
+      href: "/projects",
+      icon: Target,
     },
   ];
 
@@ -87,7 +125,7 @@ export default async function DashboardPage() {
             Vistazo general de tus tareas y frentes abiertos. Manten el sistema actualizado para liberar tu mente.
           </p>
 
-          <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {workflow.map((item) => {
               const Icon = item.icon;
               return (
@@ -205,9 +243,9 @@ export default async function DashboardPage() {
           <section className="panel-surface rounded-[30px] p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="eyebrow">Próximos pasos</p>
+                <p className="eyebrow">Hoy</p>
                 <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
-                  Tareas Prioritarias
+                  Tablero de aterrizaje
                 </h2>
               </div>
               <Link href="/actions" className="text-sm font-medium text-[var(--foreground)] hover:underline">
@@ -216,13 +254,13 @@ export default async function DashboardPage() {
             </div>
 
             <div className="mt-6 space-y-3">
-              {data.focusTasks.length === 0 && (
+              {data.todayTasks.length === 0 && (
                 <p className="panel-quiet rounded-2xl p-5 text-sm leading-relaxed text-[var(--muted-foreground)]">
-                  No hay acciones activas. Este es un buen momento para clarificar el inbox o activar una palanca concreta.
+                  Hoy no tiene una lista clara todavía. Programa tareas en `Actions` para que la home funcione como agenda operativa.
                 </p>
               )}
 
-              {data.focusTasks.map((task) => (
+              {data.todayTasks.map((task) => (
                 <article
                   key={task.id}
                   className="panel-quiet rounded-2xl p-4 transition-all hover:-translate-y-0.5 hover:border-[var(--foreground)]/15"
@@ -231,15 +269,106 @@ export default async function DashboardPage() {
                     <div className="min-w-0">
                       <p className="text-base font-semibold text-[var(--foreground)]">{task.title}</p>
                       <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-                        {task.projectTitle ?? "Sin proyecto"} · {task.priority}
-                        {task.energy ? ` · ${task.energy}` : ""}
-                        {task.dueDate ? ` · vence ${formatShortDate(task.dueDate)}` : ""}
+                        {task.projectTitle ?? "Sin proyecto"} · {TASK_PRIORITY_LABELS[task.priority]}
+                        {task.energy ? ` · ${LOG_ENERGY_LABELS[task.energy]}` : ""}
+                        {` · ${formatTaskTiming(task)}`}
                       </p>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {task.isRecurring && (
+                          <span className="kicker-pill">
+                            <Repeat2 className="h-3 w-3" />
+                            {recurrenceLabel(task.recurrenceRule) ?? "Recurrente"}
+                          </span>
+                        )}
+                        {task.estimatedMinutes && (
+                          <span className="kicker-pill">estimado {task.estimatedMinutes}m</span>
+                        )}
+                        {task.actualMinutes && (
+                          <span className="kicker-pill">real {task.actualMinutes}m</span>
+                        )}
+                      </div>
                     </div>
-                    <span className="kicker-pill">{task.status}</span>
+                    <span className="kicker-pill">{TASK_STATUS_LABELS[task.status]}</span>
                   </div>
                 </article>
               ))}
+            </div>
+          </section>
+
+          <section className="panel-surface rounded-[30px] p-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="eyebrow">Semana actual</p>
+                <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
+                  Horizonte semanal
+                </h2>
+              </div>
+              <p className="text-sm text-[var(--muted-foreground)]">
+                {formatShortDate(data.currentWeek.weekStart)} - {formatShortDate(data.currentWeek.weekEnd)}
+              </p>
+            </div>
+
+            <div className="mt-6 grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
+              <div className="space-y-3">
+                {data.weekTasks.length === 0 ? (
+                  <p className="panel-quiet rounded-2xl p-5 text-sm leading-relaxed text-[var(--muted-foreground)]">
+                    La semana no tiene cola visible todavía. Puedes programar tareas con `scheduled_for` para convertir esto en un radar real.
+                  </p>
+                ) : (
+                  data.weekTasks.map((task) => (
+                    <article key={task.id} className="panel-quiet rounded-2xl p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-[var(--foreground)]">{task.title}</p>
+                          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+                            {task.projectTitle ?? "Sin proyecto"} · {formatTaskTiming(task)}
+                          </p>
+                        </div>
+                        <span className="kicker-pill">{TASK_PRIORITY_LABELS[task.priority]}</span>
+                      </div>
+                    </article>
+                  ))
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <article className="panel-quiet rounded-[28px] p-5">
+                  <p className="eyebrow">Revision semanal</p>
+                  <h3 className="mt-3 text-lg font-semibold text-[var(--foreground)]">
+                    {data.lastWeeklyReview?.next_focus || "Todavia no definiste el siguiente foco"}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">
+                    {data.lastWeeklyReview?.summary || "La ultima review todavia no tiene un resumen guardado."}
+                  </p>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    <span className="kicker-pill">{data.overdueCount} vencidas</span>
+                    <span className="kicker-pill">{data.weeklyDecisionReviews.length} decisiones para revisar</span>
+                  </div>
+                </article>
+
+                <article className="panel-quiet rounded-[28px] p-5">
+                  <p className="eyebrow">Decision reviews</p>
+                  <div className="mt-4 space-y-3">
+                    {data.weeklyDecisionReviews.length === 0 && (
+                      <p className="text-sm text-[var(--muted-foreground)]">
+                        Esta semana no hay decisiones abiertas con review_date cercana.
+                      </p>
+                    )}
+                    {data.weeklyDecisionReviews.map((decision) => (
+                      <Link
+                        key={decision.id}
+                        href={`/decisions/${decision.id}`}
+                        className="block rounded-2xl border border-[var(--border)] px-4 py-3 transition-all hover:border-[var(--foreground)]/15"
+                      >
+                        <p className="text-sm font-semibold text-[var(--foreground)]">{decision.title}</p>
+                        <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+                          review {decision.reviewDate ? formatShortDate(decision.reviewDate) : "sin fecha"}
+                        </p>
+                      </Link>
+                    ))}
+                  </div>
+                </article>
+              </div>
             </div>
           </section>
 
@@ -290,6 +419,40 @@ export default async function DashboardPage() {
           <section className="panel-surface rounded-[30px] p-6">
             <div className="flex items-center justify-between gap-4">
               <div>
+                <p className="eyebrow">En movimiento</p>
+                <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
+                  Tareas Prioritarias
+                </h2>
+              </div>
+              <Flame className="h-5 w-5 text-[var(--muted-foreground)]" />
+            </div>
+
+            <div className="mt-6 space-y-3">
+              {data.focusTasks.length === 0 && (
+                <p className="panel-quiet rounded-2xl p-5 text-sm leading-relaxed text-[var(--muted-foreground)]">
+                  No hay acciones activas. Este es un buen momento para clarificar el inbox o activar una palanca concreta.
+                </p>
+              )}
+
+              {data.focusTasks.map((task) => (
+                <article key={task.id} className="panel-quiet rounded-2xl p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-[var(--foreground)]">{task.title}</p>
+                      <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+                        {task.projectTitle ?? "Sin proyecto"} · {TASK_STATUS_LABELS[task.status]}
+                      </p>
+                    </div>
+                    <span className="kicker-pill">{TASK_PRIORITY_LABELS[task.priority]}</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="panel-surface rounded-[30px] p-6">
+            <div className="flex items-center justify-between gap-4">
+              <div>
                 <p className="eyebrow">Conocimiento</p>
                 <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
                   Conocimiento Reciente
@@ -309,6 +472,33 @@ export default async function DashboardPage() {
                     {note.preview}
                   </p>
                 </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="panel-surface rounded-[30px] p-6">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="eyebrow">Vault</p>
+                <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
+                  Recursos Recientes
+                </h2>
+              </div>
+              <Library className="h-5 w-5 text-[var(--muted-foreground)]" />
+            </div>
+
+            <div className="mt-6 space-y-3">
+              {data.resources.map((resource) => (
+                <Link
+                  key={resource.id}
+                  href={`/resources/${resource.id}`}
+                  className="block rounded-2xl border border-[var(--border)] px-4 py-4 transition-all hover:border-[var(--foreground)]/15"
+                >
+                  <p className="text-sm font-semibold text-[var(--foreground)]">{resource.title}</p>
+                  <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+                    {resource.type} · {formatShortDate(resource.createdAt)}
+                  </p>
+                </Link>
               ))}
             </div>
           </section>
@@ -334,6 +524,17 @@ export default async function DashboardPage() {
               <div className="panel-quiet rounded-2xl p-4">
                 <p className="eyebrow">Decisiones</p>
                 <p className="mt-3 text-2xl font-semibold text-[var(--foreground)]">{data.openDecisionCount}</p>
+              </div>
+            </div>
+
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <div className="panel-quiet rounded-2xl p-4">
+                <p className="eyebrow">Vencidas</p>
+                <p className="mt-3 text-2xl font-semibold text-[var(--foreground)]">{data.overdueCount}</p>
+              </div>
+              <div className="panel-quiet rounded-2xl p-4">
+                <p className="eyebrow">Semana</p>
+                <p className="mt-3 text-2xl font-semibold text-[var(--foreground)]">{data.weekTasks.length}</p>
               </div>
             </div>
 

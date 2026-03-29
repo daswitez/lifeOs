@@ -2,6 +2,7 @@ import { DECISION_STATUSES } from "@/lib/domain";
 import { CreateEntityModal } from "@/components/forms/create-entity-modal";
 import { createDecisionAction } from "@/server/actions/lifeos";
 import { getDecisionsData } from "@/server/queries/lifeos";
+import Link from "next/link";
 
 function formatDate(value: string | null) {
   if (!value) return "Sin fecha";
@@ -97,7 +98,11 @@ export default async function DecisionsPage() {
                   <p className="eyebrow">
                     {decision.status}
                   </p>
-                  <h2 className="mt-3 text-xl font-semibold text-[var(--foreground)]">{decision.title}</h2>
+                  <h2 className="mt-3 text-xl font-semibold text-[var(--foreground)]">
+                    <Link href={`/decisions/${decision.id}`} className="hover:underline">
+                      {decision.title}
+                    </Link>
+                  </h2>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {DECISION_STATUSES.includes(decision.status) && (

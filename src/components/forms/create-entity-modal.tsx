@@ -30,11 +30,6 @@ export function CreateEntityModal({
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -68,8 +63,8 @@ export function CreateEntityModal({
         {triggerLabel}
       </Button>
 
-      {open && mounted && createPortal(
-        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6">
+      {open && typeof document !== "undefined" && createPortal(
+        <div className="fixed inset-0 z-[100] overflow-y-auto px-4 py-4 sm:py-6">
           <button
             type="button"
             aria-label="Close modal"
@@ -77,47 +72,56 @@ export function CreateEntityModal({
             onClick={() => setOpen(false)}
           />
 
-          <div className={cn("panel-surface relative z-10 w-full max-w-3xl rounded-[32px] p-6 sm:p-8", className)}>
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="eyebrow">Crear</p>
-                <h2 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">{title}</h2>
-                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--muted-foreground)]">
-                  {description}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                className="rounded-full border border-[var(--border)] p-2 text-[var(--muted-foreground)] transition-colors hover:bg-[var(--accent-soft)] hover:text-[var(--foreground)]"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            <form action={handleSubmit} className="mt-8">
-              <div className="space-y-5">{children}</div>
-
-              {error && (
-                <div className="mt-5 rounded-2xl border border-red-500/20 bg-red-500/8 px-4 py-3 text-sm text-red-600">
-                  {error}
-                </div>
+          <div className="relative z-10 flex min-h-full items-start justify-center">
+            <div
+              className={cn(
+                "panel-surface my-auto flex w-full max-w-3xl flex-col overflow-hidden rounded-[32px] p-6 max-h-[calc(100dvh-2rem)] sm:p-8 sm:max-h-[calc(100dvh-3rem)]",
+                className
               )}
-
-              <div className="soft-rule mt-8 flex flex-col gap-3 pt-5 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-sm text-[var(--muted-foreground)]">
-                  Mantiene el canvas limpio y deja el contexto principal visible hasta que decidas crear.
-                </p>
-                <div className="flex gap-3">
-                  <Button type="button" variant="outline" className="rounded-full px-5" onClick={() => setOpen(false)}>
-                    Cancelar
-                  </Button>
-                  <Button type="submit" className="rounded-full px-5" disabled={isPending}>
-                    {isPending ? pendingLabel : submitLabel}
-                  </Button>
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="eyebrow">Crear</p>
+                  <h2 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">{title}</h2>
+                  <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--muted-foreground)]">
+                    {description}
+                  </p>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="rounded-full border border-[var(--border)] p-2 text-[var(--muted-foreground)] transition-colors hover:bg-[var(--accent-soft)] hover:text-[var(--foreground)]"
+                >
+                  <X className="h-4 w-4" />
+                </button>
               </div>
-            </form>
+
+              <form action={handleSubmit} className="mt-8 flex min-h-0 flex-1 flex-col">
+                <div className="min-h-0 flex-1 space-y-5 overflow-y-auto pr-1">
+                  {children}
+
+                  {error && (
+                    <div className="rounded-2xl border border-red-500/20 bg-red-500/8 px-4 py-3 text-sm text-red-600">
+                      {error}
+                    </div>
+                  )}
+                </div>
+
+                <div className="soft-rule mt-6 flex flex-col gap-3 pt-5 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-sm text-[var(--muted-foreground)]">
+                    Mantiene el canvas limpio y deja el contexto principal visible hasta que decidas crear.
+                  </p>
+                  <div className="flex gap-3">
+                    <Button type="button" variant="outline" className="rounded-full px-5" onClick={() => setOpen(false)}>
+                      Cancelar
+                    </Button>
+                    <Button type="submit" className="rounded-full px-5" disabled={isPending}>
+                      {isPending ? pendingLabel : submitLabel}
+                    </Button>
+                  </div>
+                </div>
+              </form>
+            </div>
           </div>
         </div>,
         document.body

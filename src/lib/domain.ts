@@ -28,6 +28,13 @@ export const TASK_STATUSES = [
 ] as const;
 
 export const TASK_PRIORITIES = ["low", "medium", "high", "urgent"] as const;
+export const TASK_RECURRENCE_PRESETS = [
+  "daily",
+  "weekdays",
+  "weekly",
+  "monthly",
+  "custom",
+] as const;
 
 export const NOTE_TYPES = [
   "plain",
@@ -87,6 +94,7 @@ export type AreaType = (typeof AREA_TYPES)[number];
 export type ProjectStatus = (typeof PROJECT_STATUSES)[number];
 export type TaskStatus = (typeof TASK_STATUSES)[number];
 export type TaskPriority = (typeof TASK_PRIORITIES)[number];
+export type TaskRecurrencePreset = (typeof TASK_RECURRENCE_PRESETS)[number];
 export type NoteType = (typeof NOTE_TYPES)[number];
 export type ResourceType = (typeof RESOURCE_TYPES)[number];
 export type StorageMode = (typeof STORAGE_MODES)[number];
@@ -110,6 +118,14 @@ export const TASK_PRIORITY_LABELS: Record<TaskPriority, string> = {
   medium: "Medium",
   high: "High",
   urgent: "Urgent",
+};
+
+export const TASK_RECURRENCE_LABELS: Record<TaskRecurrencePreset, string> = {
+  daily: "Daily",
+  weekdays: "Weekdays",
+  weekly: "Weekly",
+  monthly: "Monthly",
+  custom: "Custom",
 };
 
 export const NOTE_TYPE_LABELS: Record<NoteType, string> = {
@@ -148,6 +164,15 @@ export const LOG_ENERGY_LABELS: Record<LogEnergy, string> = {
   medium: "Medium",
   high: "High",
   very_high: "Very High",
+};
+
+export const RELATION_KIND_LABELS: Record<RelationKind, string> = {
+  inspired_by: "Inspired By",
+  supports: "Supports",
+  blocks: "Blocks",
+  references: "References",
+  derived_from: "Derived From",
+  related_to: "Related To",
 };
 
 export const AREA_TYPE_LABELS: Record<AreaType, string> = {

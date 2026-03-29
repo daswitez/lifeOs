@@ -5,17 +5,21 @@ import { usePathname } from "next/navigation";
 import {
   BarChart,
   CheckSquare,
+  CircleUserRound,
   Compass,
   Database,
   FolderKanban,
   Inbox,
   LayoutDashboard,
   Library,
+  LogOut,
   Search,
+  Settings,
   Layers,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { logoutAction } from "@/server/actions/lifeos";
 
 type NavLink = {
   icon: LucideIcon;
@@ -28,6 +32,7 @@ type NavItem = NavLink | { divider: true };
 
 const NAV_ITEMS: NavItem[] = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/" },
+  { icon: Search, label: "Search", href: "/search" },
   { icon: Inbox, label: "Inbox", href: "/inbox" },
   { icon: CheckSquare, label: "Actions", href: "/actions" },
   { icon: Layers, label: "Areas", href: "/areas" },
@@ -38,15 +43,17 @@ const NAV_ITEMS: NavItem[] = [
   { icon: Database, label: "Vault", href: "/resources" },
   { divider: true },
   { icon: BarChart, label: "Review", href: "/review" },
+  { icon: Settings, label: "Profile", href: "/profile" },
 ];
 
 const MOBILE_ITEMS: NavLink[] = [
   { icon: LayoutDashboard, label: "Home", href: "/" },
+  { icon: Search, label: "Buscar", href: "/search" },
   { icon: Inbox, label: "Inbox", href: "/inbox" },
   { icon: CheckSquare, label: "Actions", href: "/actions" },
   { icon: Layers, label: "Areas", href: "/areas" },
   { icon: FolderKanban, label: "Projects", href: "/projects" },
-  { icon: Search, label: "Know", href: "/knowledge" },
+  { icon: CircleUserRound, label: "Perfil", href: "/profile" },
 ];
 
 function isActivePath(pathname: string, href: string) {
@@ -54,7 +61,17 @@ function isActivePath(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function SidebarNav({ inboxCount }: { inboxCount: number }) {
+export function SidebarNav({
+  inboxCount,
+  profile,
+}: {
+  inboxCount: number;
+  profile: {
+    fullName: string | null;
+    username: string | null;
+    email: string | null;
+  };
+}) {
   const pathname = usePathname();
   const items = NAV_ITEMS.map((item) =>
     "href" in item && item.href === "/inbox"
@@ -64,8 +81,8 @@ export function SidebarNav({ inboxCount }: { inboxCount: number }) {
 
   return (
     <>
-      <aside className="hidden h-full w-72 shrink-0 border-r border-[var(--border)] bg-[color:color-mix(in_srgb,var(--surface-strong)_88%,transparent)] px-4 pb-6 pt-8 backdrop-blur-xl md:flex md:flex-col">
-        <div className="mb-10 px-2">
+      <aside className="hidden h-full min-h-0 w-72 shrink-0 border-r border-[var(--border)] bg-[color:color-mix(in_srgb,var(--surface-strong)_88%,transparent)] px-4 pb-6 pt-8 backdrop-blur-xl md:flex md:flex-col">
+        <div className="mb-10 shrink-0 px-2">
           <div className="flex items-center justify-between">
             <div>
               <p className="eyebrow">LifeOS</p>
@@ -73,11 +90,26 @@ export function SidebarNav({ inboxCount }: { inboxCount: number }) {
                 Command Center
               </h1>
             </div>
-            <div className="h-2.5 w-2.5 rounded-full bg-[var(--accent)] shadow-[0_0_20px_rgba(28,63,54,0.45)]" />
+            <div className="flex items-center gap-3">
+              <div className="h-2.5 w-2.5 rounded-full bg-[var(--accent)] shadow-[0_0_20px_rgba(28,63,54,0.45)]" />
+              <Link
+                href="/profile"
+                aria-label="Abrir perfil"
+                className={cn(
+                  "inline-flex h-11 w-11 items-center justify-center rounded-full border transition-colors",
+                  isActivePath(pathname, "/profile")
+                    ? "border-[var(--foreground)] bg-[var(--foreground)] text-[var(--background)] shadow-[var(--shadow-card)]"
+                    : "border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--foreground)] hover:text-[var(--foreground)]"
+                )}
+              >
+                <CircleUserRound className="h-5 w-5" />
+              </Link>
+            </div>
           </div>
         </div>
 
-        <nav className="flex flex-1 flex-col gap-1.5">
+        <nav className="min-h-0 flex-1 overflow-y-auto pr-1">
+          <div className="flex flex-col gap-1.5">
           {items.map((item, idx) => {
             if ("divider" in item) {
               return <div key={`divider-${idx}`} className="my-3 h-px bg-[color:color-mix(in_srgb,var(--border)_70%,transparent)]" />;
@@ -124,13 +156,40 @@ export function SidebarNav({ inboxCount }: { inboxCount: number }) {
               </Link>
             );
           })}
+          </div>
         </nav>
+        <div className="mt-6 shrink-0 rounded-[24px] border border-[var(--border)] bg-[var(--accent-soft)]/30 p-4">
+          <p className="text-sm font-medium text-[var(--foreground)]">
+            {profile.fullName || profile.username || "Tu espacio"}
+          </p>
+          <p className="mt-1 truncate text-xs text-[var(--muted-foreground)]">
+            {profile.email || "Sin email visible"}
+          </p>
 
+          <div className="mt-4 flex gap-2">
+            <Link
+              href="/profile"
+              className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--muted-foreground)] transition-colors hover:border-[var(--foreground)] hover:text-[var(--foreground)]"
+            >
+              <Settings className="h-3.5 w-3.5" />
+              Perfil
+            </Link>
+            <form action={logoutAction}>
+              <button
+                type="submit"
+                className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--muted-foreground)] transition-colors hover:border-[var(--foreground)] hover:text-[var(--foreground)]"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+                Salir
+              </button>
+            </form>
+          </div>
+        </div>
 
       </aside>
 
       <nav className="fixed inset-x-3 bottom-3 z-40 rounded-[28px] border border-[var(--border)] bg-[color:color-mix(in_srgb,var(--surface-strong)_88%,transparent)] p-2 shadow-[var(--shadow-soft)] backdrop-blur-xl md:hidden">
-        <div className="grid grid-cols-5 gap-1">
+        <div className="grid grid-cols-6 gap-1">
           {MOBILE_ITEMS.map((item) => {
             const active = isActivePath(pathname, item.href);
             const Icon = item.icon;

@@ -31,7 +31,7 @@ export default async function AreasPage() {
           {areas.length === 0 && (
             <div className="panel-surface flex flex-col items-center justify-center rounded-3xl py-20 text-center">
               <Layers className="mb-4 h-10 w-10 text-[var(--muted-foreground)]/50" />
-              <p className="text-lg font-medium text-[var(--foreground)]">You don't have any areas yet</p>
+              <p className="text-lg font-medium text-[var(--foreground)]">You don&apos;t have any areas yet</p>
               <p className="mt-2 text-sm text-[var(--muted-foreground)]">Use the side panel to create your first life domain.</p>
             </div>
           )}

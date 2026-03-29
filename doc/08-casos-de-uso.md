@@ -1,299 +1,299 @@
-# Casos de Uso (LifeOS)
+# Casos de Uso Extendidos de LifeOS
 
-Voy a organizarlo por módulos para que luego puedas convertir esto en backlog, épicas, user stories o incluso directamente en rutas y componentes.
+## Propósito
+LifeOS ya no es solo un sistema para capturar, organizar, ejecutar y revisar. Con la extensión nueva del esquema también empieza a cubrir cuatro verbos adicionales:
 
----
+- narrar
+- cobrar
+- relacionar
+- medir
 
-# Visión general del sistema
+El resultado es un producto personal que combina cockpit operativo, segundo cerebro, journal y pequeño backoffice comercial/financiero bajo un mismo techo.
 
-El sistema es un **LifeOS personal** orientado a centralizar la gestión de vida, trabajo, conocimiento y recursos en una sola plataforma. El usuario puede capturar información, organizarla, conectarla, convertirla en acción, revisarla con el tiempo y apoyarse en recursos multimedia o externos para pensar y trabajar mejor.
+## Lectura del sistema
+El actor principal sigue siendo uno:
 
-El sistema gira alrededor de un único actor principal:
+- usuario autenticado
 
-**Actor principal:** Usuario autenticado
+La diferencia es que ahora el sistema se divide en dos grandes alas:
 
-# 1. Casos de uso de autenticación y perfil
+1. Núcleo LifeOS ya operativo: dashboard, inbox, tareas, proyectos, notas, recursos, decisiones, review.
+2. Ala extendida modelada en base de datos: journals, finanzas personales, contactos, negocios, engagements, facturas e interacciones.
 
-## 1.1 Registrarse
-El usuario crea una cuenta en el sistema usando email y contraseña o el método de autenticación habilitado.
-**Objetivo:** acceder a un espacio privado y persistente.
-**Resultado esperado:** se crea el usuario en auth y su perfil base en `profiles`.
-
-## 1.2 Iniciar sesión
-El usuario accede a su cuenta para usar su sistema personal.
-**Objetivo:** entrar a su espacio de trabajo.
-**Resultado esperado:** obtiene sesión válida y acceso a datos privados.
-
-## 1.3 Cerrar sesión
-El usuario finaliza su sesión.
-**Objetivo:** proteger su cuenta o cambiar de sesión.
-**Resultado esperado:** la sesión se invalida.
-
-## 1.4 Consultar su perfil
-El usuario visualiza su información personal básica.
-**Objetivo:** verificar sus datos de cuenta.
-**Resultado esperado:** ve nombre, email, avatar, zona horaria, etc.
-
-## 1.5 Editar su perfil
-El usuario modifica datos como nombre, avatar, bio, zona horaria o idioma.
-**Objetivo:** personalizar el sistema.
-**Resultado esperado:** el perfil queda actualizado.
+La intención no es tratar estos bloques como apps separadas, sino como capas conectadas.
 
 ---
 
-# 2. Casos de uso del dashboard y contexto general
+## 1. Journal
 
-## 2.1 Ver el dashboard principal
-El usuario entra al dashboard y obtiene una vista resumida de su sistema.
-**Objetivo:** orientarse rápidamente.
-**Puede incluir:** proyectos activos, tareas pendientes, recursos recientes, notas recientes, elementos del inbox, revisión pendiente.
+### 1.1 Crear y mantener journals
+El usuario crea journals separados como `Personal`, `Worklog`, `Gratitude`, `Learning` o `Travel`, los edita, los archiva y define uno por defecto para captura rápida.
 
-## 2.2 Ver actividad reciente
-El usuario consulta las últimas entidades modificadas o creadas.
-**Objetivo:** retomar contexto sin rebuscar.
-**Resultado esperado:** ve cambios recientes en notas, tareas, proyectos y recursos.
+**Objetivo:** evitar que toda la escritura personal caiga en una sola corriente indiferenciada.
 
-## 2.3 Ver resumen de estado personal
-El usuario obtiene una síntesis de su situación actual.
-**Objetivo:** comprender qué requiere atención.
-**Resultado esperado:** ve señales como backlog, revisiones pendientes, próximos vencimientos y proyectos activos.
+### 1.2 Escribir una entrada de journal
+El usuario crea una entrada dentro de un journal con fecha, contenido y tipo de entrada.
 
----
+**Tipos previstos:** `daily`, `reflection`, `gratitude`, `learning`, `worklog`, `health`, `travel`, `freeform`.
 
-# 3. Casos de uso del inbox universal
+**Objetivo:** registrar pensamiento, experiencia, aprendizaje o contexto narrativo con una forma más rica que un `daily_log`.
 
-## 3.1 Capturar una idea rápida
-El usuario registra una idea sin clasificarla todavía.
-**Objetivo:** no perder pensamientos o pendientes.
-**Resultado esperado:** se crea un item inicial que luego podrá convertirse en tarea, nota, recurso, proyecto o decisión.
+### 1.3 Contextualizar una entrada
+El usuario puede enriquecer la entrada con:
 
-## 3.2 Guardar un pendiente rápido
-El usuario añade algo que debe hacer más tarde.
-**Objetivo:** descargar la mente.
-**Resultado esperado:** el pendiente entra en el sistema sin necesidad de estructurarlo de inmediato.
+- área
+- proyecto
+- `daily_log`
+- mood
+- energía
+- clima
+- ubicación
+- privacidad
 
-## 3.3 Guardar una referencia rápida
-El usuario añade un link, título, nombre de libro, vídeo o PDF para revisar luego.
-**Objetivo:** capturar material de interés.
-**Resultado esperado:** queda registrado como entrada pendiente de clasificar.
+**Objetivo:** que el journal no sea solo texto, sino texto con contexto relacional.
 
-## 3.4 Procesar el inbox
-El usuario revisa entradas del inbox y decide qué son.
-**Objetivo:** transformar captura bruta en información útil.
-**Posibles resultados:** convertir en tarea, nota, recurso, proyecto, decisión o archivar/eliminar.
+### 1.4 Conectar journal con el resto del sistema
+El usuario vincula recursos y etiquetas a una entrada, y relaciona la escritura con proyectos o con el registro diario estructurado.
 
-## 3.5 Archivar una entrada del inbox
-El usuario decide que una captura ya no necesita acción ni procesamiento.
-**Objetivo:** limpiar el sistema.
-**Resultado esperado:** el item se archiva o descarta.
+**Objetivo:** unir narración y ejecución.
+
+### 1.5 Explorar el journal
+El usuario consulta una entrada individual, recorre el timeline cronológico, filtra por tipo o rango de fechas y busca por texto o contexto.
+
+**Objetivo:** recuperar memoria personal y detectar patrones.
+
+### 1.6 Revisar patrones personales
+El usuario observa tendencias entre tono narrativo, mood, energía, áreas de vida y momentos del trabajo.
+
+**Objetivo:** usar el journal como instrumento de aprendizaje personal, no solo como archivo.
 
 ---
 
-# 4. Casos de uso de áreas
+## 2. Finanzas Personales
 
-## 4.1 Crear un área
-El usuario crea un área de vida o responsabilidad, como trabajo, salud, aprendizaje o finanzas.
-**Objetivo:** estructurar su sistema por dominios importantes.
-**Resultado esperado:** existe una nueva área disponible para relacionar proyectos, tareas, notas y recursos.
+### 2.1 Crear y mantener cuentas financieras
+El usuario crea cuentas como `cash`, `checking`, `savings`, `credit_card`, `investment`, `crypto`, `ewallet`, `receivable` o `payable`.
 
-## 4.2 Editar un área
-El usuario modifica nombre, descripción, color, icono o tipo del área.
+Puede registrar saldo inicial, ajustar saldo manual actual y archivar cuentas sin perder historial.
 
-## 4.3 Archivar un área
-El usuario deja de usar temporalmente o permanentemente un área.
+**Objetivo:** representar de forma realista dónde vive el dinero.
 
-## 4.4 Consultar una vista de área
-El usuario entra a un área y ve todo lo relacionado con ella.
-**Objetivo:** concentrarse en un dominio concreto.
-**Puede ver:** proyectos, tareas, notas, recursos, decisiones.
+### 2.2 Crear taxonomía financiera
+El usuario crea categorías y subcategorías para ingresos, gastos y transferencias.
 
----
+**Objetivo:** clasificar el flujo económico sin perder granularidad.
 
-# 5. Casos de uso de proyectos
+### 2.3 Registrar transacciones
+El usuario registra:
 
-## 5.1 Crear un proyecto
-El usuario define un proyecto con título, descripción, prioridad, fechas y área asociada.
-**Objetivo:** agrupar trabajo orientado a un resultado concreto.
+- ingresos
+- egresos
+- transferencias
 
-## 5.2 Editar un proyecto
-El usuario actualiza datos del proyecto.
+Además puede editar, cambiar estado (`pending`, `posted`, `reconciled`, `void`) y asociar cada transacción con categoría, negocio, contacto, engagement o proyecto.
 
-## 5.3 Cambiar estado de un proyecto
-El usuario marca un proyecto como activo, pausado, completado, archivado o cancelado.
+**Objetivo:** que cada movimiento económico tenga trazabilidad operativa.
 
-## 5.4 Consultar detalle de proyecto
-El usuario entra a un proyecto y ve su contexto completo.
-**Debe poder ver:** descripción, tareas, notas, recursos, decisiones, estado y fechas.
+### 2.4 Mantener balances y reconciliación
+El usuario guarda snapshots de balance por cuenta y consulta la evolución histórica.
 
-## 5.5 Asociar un proyecto a un área
-El usuario vincula el proyecto a una dimensión de su vida.
+**Objetivo:** comparar sistema vs realidad y sostener confianza en el ledger.
 
-## 5.6 Relacionar recursos con un proyecto
-El usuario conecta libros, artículos, PDFs, links o vídeos al proyecto.
+### 2.5 Gestionar recurrencias financieras
+El usuario define reglas recurrentes para salario, alquiler, subscriptions o retainers y revisa las próximas ocurrencias.
 
-## 5.7 Relacionar notas con un proyecto
-El usuario asocia notas que forman parte del trabajo o pensamiento del proyecto.
+**Objetivo:** anticipar flujo futuro y reducir captura repetitiva.
 
-## 5.8 Etiquetar un proyecto
-El usuario asigna tags para clasificación adicional.
+### 2.6 Analizar finanzas
+El usuario consulta:
 
-## 5.9 Archivar un proyecto
-El usuario oculta proyectos terminados o fuera de foco.
+- ingresos del mes
+- egresos del mes
+- flujo neto
+- gastos por categoría
+- ingresos por fuente
+- balances por cuenta
+- patrimonio líquido aproximado
+- separación por moneda
+- cuentas por cobrar y por pagar
 
-## 5.10 Consultar listado de proyectos
-El usuario explora proyectos filtrando por estado, prioridad, área o etiqueta.
+**Objetivo:** pasar de registrar dinero a entenderlo.
 
 ---
 
-# 6. Casos de uso de tareas
+## 3. Trabajo, Engagements y Fuentes de Ingreso
 
-## 6.1 Crear una tarea
-El usuario añade una acción concreta.
+### 3.1 Crear un engagement
+El usuario registra una oportunidad o trabajo como `freelance`, `consulting`, `retainer`, `contract`, `business`, `full_time` o `part_time`.
 
-## 6.2 Crear una subtarea
-El usuario descompone una tarea compleja.
+**Objetivo:** representar trabajo que genera o puede generar ingresos, distinto de un proyecto interno.
 
-## 6.3 Editar una tarea
-El usuario ajusta título, descripción, estado, prioridad, fecha límite, tiempo estimado, etc.
+### 3.2 Definir modelo económico del engagement
+El usuario establece si el trabajo se paga por:
 
-## 6.4 Cambiar estado de una tarea
-El usuario mueve una tarea entre inbox, todo, in progress, waiting, done, cancelled o archived.
+- hourly
+- fixed
+- retainer
+- salary
+- commission
+- mixed
 
-## 6.5 Priorizar una tarea
-El usuario define urgencia o importancia relativa.
+Y registra tarifa horaria, fee fijo, fee recurrente, valor estimado y valor cerrado.
 
-## 6.6 Programar una tarea
-El usuario asigna una fecha o momento previsto de ejecución.
+**Objetivo:** conectar pipeline comercial con realidad económica.
 
-## 6.7 Asignar tarea a proyecto
-El usuario vincula la tarea con el proyecto relevante.
+### 3.3 Mover un engagement por pipeline
+El usuario cambia el estado entre `lead`, `prospecting`, `proposal_sent`, `negotiation`, `active`, `paused`, `completed`, `cancelled` o `lost`.
 
-## 6.8 Asignar tarea a área
-El usuario la relaciona con un dominio vital o profesional.
+**Objetivo:** convertir LifeOS también en radar de trabajo e ingresos.
 
-## 6.9 Marcar una tarea como completada
-El usuario registra su finalización.
+### 3.4 Relacionar engagement con el resto del sistema
+El usuario vincula el engagement con:
 
-## 6.10 Registrar tiempo estimado o real
-El usuario añade duración prevista o invertida.
+- negocio
+- contacto principal
+- proyecto
+- área
 
-## 6.11 Etiquetar una tarea
-El usuario organiza tareas con tags.
+**Objetivo:** que la capa comercial no viva aislada de la capa operativa.
 
-## 6.12 Relacionar recursos con una tarea
-El usuario adjunta material necesario para completarla.
+### 3.5 Analizar trabajo e ingresos
+El usuario consulta pipeline, trabajos activos, trabajos perdidos, trabajos por cliente e ingresos por engagement.
 
-## 6.13 Consultar tareas por contexto
-El usuario filtra tareas por estado, prioridad, fecha, energía requerida, proyecto, área o etiqueta.
-
-## 6.14 Gestionar tareas recurrentes
-El usuario crea tareas periódicas.
-
-## 6.15 Ver una vista de ejecución diaria
-El usuario consulta las tareas relevantes para el día o la semana.
+**Objetivo:** entender qué tipos de trabajo convierten, pagan y sostienen mejor la operación.
 
 ---
 
-# 7. Casos de uso de notas y conocimiento
+## 4. Facturas e Ingresos Cobrables
 
-## 7.1 Crear una nota
-El usuario escribe libremente, resume, o captura ideas.
+### 4.1 Crear y editar facturas
+El usuario genera una factura asociada a un negocio, contacto o engagement, con número de factura, fechas, importes y notas.
 
-## 7.2 Editar una nota
-El usuario modifica contenido, resumen, tipo o título.
+### 4.2 Añadir líneas de factura
+El usuario define conceptos específicos con cantidad, precio unitario y subtotal por línea.
 
-## 7.3 Consultar una nota
-El usuario lee una nota individual con todo su contexto.
+**Objetivo:** que la factura sea una entidad operativa y no solo un monto agregado.
 
-## 7.4 Etiquetar una nota
-El usuario organiza su conocimiento por temas.
+### 4.3 Mantener estado de cobro
+La factura puede pasar por `draft`, `sent`, `partially_paid`, `paid`, `overdue` o `void`.
 
-## 7.5 Relacionar una nota con un proyecto
-El usuario asocia la nota a trabajo concreto.
+El usuario registra cuánto se pagó, cuánto falta y qué transacción cubrió ese pago.
 
-## 7.6 Relacionar una nota con un área
-El usuario la vincula a un dominio vital.
+**Objetivo:** unir facturación y dinero real.
 
-## 7.7 Vincular una nota con un recurso fuente
-El usuario indica que la nota proviene de un libro, paper, artículo o vídeo.
+### 4.4 Consultar cuentas por cobrar
+El usuario revisa facturas vencidas, facturas por cliente, facturas por engagement y balance pendiente consolidado.
 
-## 7.8 Conectar una nota con otra nota
-El usuario crea relaciones intelectuales entre ideas (ej. related_to, inspired_by).
-
-## 7.9 Marcar una nota como favorita
-El usuario destaca notas importantes.
-
-## 7.10 Archivar una nota
-El usuario retira notas viejas o menos relevantes del flujo principal.
-
-## 7.11 Consultar notas recientes
-El usuario revisa conocimiento producido recientemente.
-
-## 7.12 Buscar notas
-El usuario busca por texto, tipo, etiqueta, proyecto o recurso fuente.
+**Objetivo:** tener una vista clara de dinero que debería entrar pero todavía no entró.
 
 ---
 
-# 8. Casos de uso de recursos y biblioteca multimedia
+## 5. Contactos y Negocios
 
-*(Crear recursos externos, internos, editar, consultar, visualizar previews, descargar, relacionar con proyectos, notas, tareas, decisiones, y navegar biblioteca).*
+### 5.1 Mantener una ficha de contacto
+El usuario registra una persona con nombre, cargo, emails, teléfonos, WhatsApp, LinkedIn, web, ciudad, notas y estado de favorito/archivo.
 
----
+**Objetivo:** conservar contexto relacional antes de volver a escribirle a alguien.
 
-# 9. Casos de uso de etiquetas
+### 5.2 Mantener una ficha de negocio
+El usuario registra una empresa con industria, web, ciudad, moneda, estado, notas e historial relacionado.
 
-*(Crear tag, editar, eliminar, asignar a proyecto/tarea/nota/recurso, y navegar la taxonomía).*
+**Objetivo:** tratar clientes y negocios como entidades persistentes, no solo como texto libre en una nota o factura.
 
----
+### 5.3 Relacionar contactos y negocios
+El usuario vincula contactos a negocios y consulta todas las personas asociadas a una empresa.
 
-# 10. Casos de uso del diario diario y seguimiento personal
+**Objetivo:** poder navegar una cuenta comercial desde personas y desde organización.
 
-*(Crear registro, anotar mood/energía/enfoca, anotar wins/bloqueos, consultar historial y detectar patrones).*
+### 5.4 Buscar y revisar relaciones pendientes
+El usuario busca contactos o negocios por nombre, empresa, email, ciudad o estado y detecta follow-ups pendientes.
 
----
-
-# 11. Casos de uso de revisión semanal
-
-*(Crear revisión semanal, resumir, registrar victorias/bloqueos/lecciones, definir siguiente foco, consultar pasadas y ver relación general con el sistema).*
-
----
-
-# 12. Casos de uso del decision journal
-
-*(Crear decisión, contexto, opciones, opción elegida, razonamiento, resultado esperado, fecha de review, relacionar a componentes, y revisar historial).*
+**Objetivo:** no perder relaciones relevantes por falta de memoria contextual.
 
 ---
 
-# 13. Casos de uso de relaciones entre entidades
+## 6. Interacciones y Seguimiento
 
-*(Nota<->Recurso, Nota<->Nota, Recurso<->Proyecto, Recurso<->Tarea, etc. Consultar relaciones transitivas de una entidad y navegar contextualmente).*
+### 6.1 Registrar una interacción
+El usuario documenta email, llamada, reunión, mensaje, propuesta, follow-up o networking.
 
----
+**Objetivo:** dejar memoria relacional de lo que pasó y de qué toca hacer después.
 
-# 14. Casos de uso de búsqueda y filtrado
+### 6.2 Asociar interacción a contacto y negocio
+Cada interacción puede conectarse con un contacto, un negocio o ambos.
 
-*(Búsqueda global cruzada, filtros específicos, y multi-variable).*
+**Objetivo:** reconstruir conversaciones y evolución de una relación sin depender del inbox de correo o del chat.
 
----
+### 6.3 Programar el próximo follow-up
+El usuario define `next_follow_up_at` y consulta qué contactos o negocios requieren seguimiento.
 
-# 15. Casos de uso de archivo y limpieza
+**Objetivo:** sostener un CRM personal ligero, útil y sin burocracia.
 
-*(Archivar, consultar archivo, restaurar, eliminar definitivamente).*
+### 6.4 Revisar timeline relacional
+El usuario ve las últimas interacciones por contacto o negocio antes de retomar una conversación.
 
----
-
-# 16. Casos de uso de multimedia y previews
-
-*(Subir imagen/PDF/archivo, generar previews ricas, consultar preview y gestión de fallos).*
-
----
-
-# 17. Casos de uso de organización temporal
-
-*(Vistas dinámicas del tiempo: tareas del día/semana, proyectos en el tiempo, notificaciones de reviews cercanas).*
+**Objetivo:** recuperar contexto en segundos.
 
 ---
 
-# 18. Casos de uso de administración personal del sistema
+## 7. Casos de Uso Conectados entre Módulos
 
-*(Configurar preferencias, personalizar taxonomía/áreas/convenciones, mantener consistencia estructural).*
+### 7.1 Journal <-> LifeOS Core
+El usuario relaciona entradas de journal con proyectos, áreas, recursos y `daily_logs`.
+
+**Objetivo:** que lo narrativo dialogue con lo operativo.
+
+### 7.2 Finanzas <-> Trabajo
+El usuario relaciona transacciones con negocios, contactos, engagements y proyectos.
+
+**Objetivo:** poder responder preguntas como “qué trabajo generó este ingreso” o “qué cliente explica este gasto”.
+
+### 7.3 Engagements <-> Proyectos
+El usuario convierte trabajo comercial en ejecución interna al enlazar un engagement con un proyecto existente o nuevo.
+
+### 7.4 Invoices <-> Transactions
+El usuario relaciona una factura con una o varias transacciones reales para saber qué pago cubrió qué monto.
+
+### 7.5 CRM <-> Pipeline
+El usuario vincula contacto, negocio, engagement e interacciones para ver una cuenta completa de punta a punta.
+
+### 7.6 Finanzas <-> Dashboard
+El usuario ve en el dashboard ingresos, egresos, cobranzas pendientes, trabajos activos y señales narrativas del journal.
+
+**Objetivo:** que la home no sea solo un tablero de tareas, sino un cockpit de vida y operación.
+
+---
+
+## 8. Casos de Uso Analíticos
+
+### 8.1 Analítica financiera
+El usuario revisa ingresos mensuales, egresos mensuales, balance neto, distribución de fondos, evolución de balances y gastos por categoría.
+
+### 8.2 Analítica comercial
+El usuario revisa pipeline, trabajos activos, ingresos por cliente, ingresos por engagement, dinero cobrado vs pendiente y trabajos perdidos.
+
+### 8.3 Analítica relacional
+El usuario detecta contactos con follow-up pendiente y ve últimas interacciones por cuenta.
+
+### 8.4 Analítica narrativa
+El usuario revisa timeline del journal y patrones entre mood, energía, escritura y trabajo.
+
+### 8.5 Analítica cruzada
+El usuario conecta dinero, trabajo y narrativa para observar relaciones como:
+
+- qué trabajos generan más valor
+- qué contextos drenan energía
+- qué periodos fueron mejores económica y personalmente
+
+---
+
+## Conclusión
+Con esta extensión LifeOS deja de ser solo un sistema para pensar y ejecutar, y empieza a comportarse como una infraestructura personal más completa:
+
+- piensa con notas y decisiones
+- ejecuta con tareas y proyectos
+- narra con journals
+- cobra con engagements e invoices
+- registra con ledger financiero
+- mantiene relaciones con contactos, negocios e interacciones
+- mide todo desde el dashboard
