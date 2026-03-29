@@ -1,26 +1,116 @@
 @import "tailwindcss";
 
+/* 
+  LifeOS Theme V2: Premium Monolith
+  Inspirado en interfaces de élite (Linear, Things 3).
+  Estrictamente monocromático, puro contraste y tipografía agresiva.
+*/
+
+@custom-variant dark (&:is(.dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* LIGHT: Blanco espartano y contrastes afilados */
+  --background: #ffffff; 
+  --foreground: #09090b; /* Zinc 950 absoluto */
+  
+  --card: #ffffff;
+  --card-foreground: #09090b;
+  
+  /* Bordes ultra sutiles. Apenas visibles para dividir secciones */
+  --border: #e4e4e7; /* Zinc 200 */
+  
+  /* Acento: Slate/Grafito de alta gama */
+  --accent: #18181b; /* Zinc 900 */
+  --accent-foreground: #fafafa;
+  --accent-soft: #f4f4f5; /* Zinc 100 */
+  
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a; /* Zinc 500 */
+}
+
+/* 
+  DARK MODE: El abismo.
+*/
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #000000; /* Negro puro OLED */
+    --foreground: #ededed;
+    
+    --card: #09090b; 
+    --card-foreground: #ededed;
+    
+    --border: #27272a; /* Zinc 800 */
+
+    --accent: #e4e4e7; /* El acento pasa a ser un blanco/gris metálico brillante */
+    --accent-foreground: #09090b;
+    --accent-soft: #18181b; /* Zinc 900 */
+    
+    --muted: #09090b;
+    --muted-foreground: #52525b; /* Zinc 600 */
+  }
+}
+
+.dark {
+  --background: #000000;
+  --foreground: #ededed;
+  --card: #09090b;
+  --card-foreground: #ededed;
+  --border: #27272a;
+  --accent: #e4e4e7;
+  --accent-foreground: #09090b;
+  --accent-soft: #18181b;
+  --muted: #09090b;
+  --muted-foreground: #52525b;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-soft: var(--accent-soft);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  /* Las mismas familias definidas en el layout de Next */
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif, "Segoe UI Emoji", "Noto Color Emoji";
+  --font-serif: var(--font-serif), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Base Styles Generales */
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  
+  overscroll-behavior-y: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar invisible pero funcional: premium feeling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+/* Utilidad para la navegación superior flotante con blur */
+.glass-header {
+  background-color: color-mix(in srgb, var(--background) 80%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
 }
