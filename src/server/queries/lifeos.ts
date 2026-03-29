@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import type {
+  AreaType,
   DecisionStatus,
   LogEnergy,
   NoteType,
@@ -39,6 +40,10 @@ type ProjectRecord = {
 type AreaRecord = {
   id: string;
   name: string;
+  description: string | null;
+  type: AreaType;
+  color: string | null;
+  icon: string | null;
 };
 
 type NoteRecord = {
@@ -97,14 +102,15 @@ type WeeklyReviewRecord = {
   created_at: string;
 };
 
-type ProjectSummary = {
+export type ProjectSummary = {
   id: string;
   title: string;
-  description: string | null;
   status: ProjectStatus;
   priority: TaskPriority;
-  areaName: string;
+  description: string | null;
   targetDate: string | null;
+  areaId: string | null;
+  areaName: string;
   updatedAt: string;
   createdAt: string;
   taskCount: number;
@@ -113,7 +119,7 @@ type ProjectSummary = {
   progress: number;
 };
 
-type ActionTask = {
+export type ActionTask = {
   id: string;
   title: string;
   status: TaskStatus;
@@ -122,6 +128,7 @@ type ActionTask = {
   energy: LogEnergy | null;
   createdAt: string;
   estimatedMinutes: number | null;
+  projectId: string | null;
   projectTitle: string | null;
 };
 
@@ -233,6 +240,7 @@ function buildProjectSummaries(
       description: project.description,
       status: project.status,
       priority: project.priority,
+      areaId: project.area_id,
       areaName: project.area_id ? areaById.get(project.area_id) ?? "Sin area" : "Sin area",
       targetDate: project.target_date,
       updatedAt: project.updated_at,
@@ -257,6 +265,7 @@ function buildActionTasks(tasks: TaskRecord[], projects: ProjectRecord[]) {
     energy: task.energy_required,
     createdAt: task.created_at,
     estimatedMinutes: task.estimated_minutes,
+    projectId: task.project_id,
     projectTitle: task.project_id ? projectById.get(task.project_id) ?? null : null,
   }));
 }
@@ -301,7 +310,7 @@ export async function getDashboardData() {
       .in("status", ["active", "on_hold"])
       .order("updated_at", { ascending: false })
       .limit(20),
-    supabase.from("areas").select("id, name").order("name"),
+    supabase.from("areas").select("id, name, description, type, color, icon").order("name"),
     supabase
       .from("notes")
       .select("id, title, content, summary, type, created_at, updated_at, project_id")
@@ -435,6 +444,7 @@ export async function getActionsData() {
         if (b.dueDate) return 1;
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       }),
+    projects: projects.filter(p => p.status === "active" || p.status === "on_hold"),
   };
 }
 
@@ -451,7 +461,7 @@ export async function getProjectsData() {
       .select("id, title, status, priority, due_date, energy_required, project_id, created_at, completed_at, estimated_minutes")
       .not("project_id", "is", null)
       .limit(200),
-    supabase.from("areas").select("id, name"),
+    supabase.from("areas").select("id, name, description, type, color, icon"),
   ]);
 
   return {
@@ -460,6 +470,7 @@ export async function getProjectsData() {
       (tasksResponse.data ?? []) as TaskRecord[],
       (areasResponse.data ?? []) as AreaRecord[]
     ),
+    areas: (areasResponse.data ?? []) as AreaRecord[],
   };
 }
 
@@ -564,7 +575,9 @@ export async function getReviewData() {
 
 export async function getInboxData() {
   const { supabase } = await getAuthedContext();
-  const [tasksResponse, notesResponse, resourcesResponse, decisionsResponse] = await Promise.all([
+  const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
+
+  const [tasksResponse, notesResponse, resourcesResponse, decisionsResponse, projectsResponse] = await Promise.all([
     supabase
       .from("tasks")
       .select(
@@ -577,25 +590,30 @@ export async function getInboxData() {
       .from("notes")
       .select("id, title, content, summary, type, created_at, updated_at, project_id")
       .in("type", ["plain", "idea"])
+      .gte("created_at", threeDaysAgo)
       .order("created_at", { ascending: false })
       .limit(8),
     supabase
       .from("resources")
       .select("id, title, description, type, storage_mode, external_url, internal_path, preview_status, created_at, area_id")
+      .gte("created_at", threeDaysAgo)
       .order("created_at", { ascending: false })
       .limit(8),
     supabase
       .from("decisions")
       .select("id, title, context, expected_outcome, chosen_option, reasoning, review_date, status, created_at")
       .eq("status", "open")
+      .gte("created_at", threeDaysAgo)
       .order("created_at", { ascending: false })
       .limit(8),
+    supabase.from("projects").select("id, title").in("status", ["active", "on_hold"]),
   ]);
 
   const tasks = (tasksResponse.data ?? []) as TaskRecord[];
   const notes = (notesResponse.data ?? []) as NoteRecord[];
   const resources = (resourcesResponse.data ?? []) as ResourceRecord[];
   const decisions = (decisionsResponse.data ?? []) as DecisionRecord[];
+  const projects = (projectsResponse.data ?? []) as { id: string; title: string }[];
 
   const items: InboxItem[] = [
     ...tasks.map((task) => ({
@@ -646,5 +664,132 @@ export async function getInboxData() {
       resources: resources.filter((resource) => !resource.description).length,
       decisions: decisions.filter((decision) => !decision.reasoning && !decision.chosen_option).length,
     },
+    projects,
+  };
+}
+
+export async function getAreasData() {
+  const { supabase } = await getAuthedContext();
+  const [areasResponse, projectsResponse] = await Promise.all([
+    supabase
+      .from("areas")
+      .select("id, name, description, type, color, icon")
+      .order("sort_order", { ascending: true })
+      .order("name", { ascending: true }),
+    supabase.from("projects").select("id, area_id").in("status", ["active", "on_hold"]),
+  ]);
+
+  const areas = (areasResponse.data ?? []) as AreaRecord[];
+  const projects = projectsResponse.data ?? [];
+
+  return {
+    areas: areas.map((area) => ({
+      ...area,
+      activeProjectsCount: projects.filter((p) => p.area_id === area.id).length,
+    })),
+  };
+}
+
+export async function getProjectDetailData(id: string) {
+  const { supabase } = await getAuthedContext();
+
+  const [projectRes, tasksRes, notesRes, projectResourcesRes] = await Promise.all([
+    supabase
+      .from("projects")
+      .select("id, title, description, status, priority, area_id, target_date, updated_at, created_at")
+      .eq("id", id)
+      .single(),
+    supabase
+      .from("tasks")
+      .select("id, title, status, priority, due_date, energy_required, project_id, created_at, completed_at, estimated_minutes")
+      .eq("project_id", id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("notes")
+      .select("id, title, content, summary, type, created_at, updated_at, project_id")
+      .eq("project_id", id)
+      .order("updated_at", { ascending: false }),
+    supabase
+      .from("project_resources")
+      .select("resource_id")
+      .eq("project_id", id),
+  ]);
+
+  if (projectRes.error || !projectRes.data) {
+    throw new Error("Project not found");
+  }
+
+  const project = projectRes.data as ProjectRecord;
+  const tasks = (tasksRes.data ?? []) as TaskRecord[];
+  const notes = (notesRes.data ?? []) as NoteRecord[];
+  
+  // Calculate stats
+  const completedTaskCount = tasks.filter((task) => task.status === "done").length;
+  const openTaskCount = tasks.filter((task) => isOpenTask(task.status)).length;
+  const taskCount = tasks.length;
+  const progress = taskCount === 0 ? 0 : Math.round((completedTaskCount / taskCount) * 100);
+
+  let areaData = { name: "No area", color: null as string | null };
+  if (project.area_id) {
+    const { data } = await supabase
+      .from("areas")
+      .select("name, color")
+      .eq("id", project.area_id)
+      .maybeSingle();
+    if (data) {
+      areaData = { name: data.name, color: data.color };
+    }
+  }
+
+  const resourceIds = projectResourcesRes.data?.map((pr) => pr.resource_id) || [];
+  let resources: ResourceRecord[] = [];
+  
+  if (resourceIds.length > 0) {
+    const { data: resData } = await supabase
+      .from("resources")
+      .select("id, title, description, type, storage_mode, external_url, internal_path, preview_status, created_at, area_id")
+      .in("id", resourceIds)
+      .order("created_at", { ascending: false });
+    if (resData) {
+      resources = resData as ResourceRecord[];
+    }
+  }
+
+  return {
+    project: {
+      id: project.id,
+      title: project.title,
+      description: project.description,
+      status: project.status,
+      priority: project.priority,
+      targetDate: project.target_date,
+      updatedAt: project.updated_at,
+      createdAt: project.created_at,
+      areaId: project.area_id,
+      areaName: areaData.name,
+      areaColor: areaData.color,
+      progress,
+      openTaskCount,
+      completedTaskCount
+    },
+    tasks: buildActionTasks(tasks, [project]),
+    notes: notes.map<KnowledgeEntry>((note) => ({
+      id: note.id,
+      title: note.title,
+      preview: notePreview(note),
+      type: note.type,
+      createdAt: note.created_at,
+      updatedAt: note.updated_at,
+    })),
+    resources: resources.map<ResourceEntry>((resource) => ({
+      id: resource.id,
+      title: resource.title,
+      description: resource.description,
+      type: resource.type,
+      storageMode: resource.storage_mode,
+      location: resource.external_url ?? resource.internal_path,
+      previewStatus: resource.preview_status,
+      createdAt: resource.created_at,
+    })),
   };
 }

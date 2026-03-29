@@ -40,28 +40,28 @@ export default async function DashboardPage() {
 
   const workflow = [
     {
-      label: "Captura",
+      label: "Bandeja de Entrada",
       value: data.inboxCount,
       detail: "items esperan aclaracion",
       href: "/inbox",
       icon: Inbox,
     },
     {
-      label: "Accion",
+      label: "Tareas Activas",
       value: data.focusTasks.length,
       detail: "palancas activas hoy",
       href: "/actions",
       icon: Flame,
     },
     {
-      label: "Traccion",
+      label: "Proyectos en Curso",
       value: data.activeProjectCount,
       detail: "proyectos estan vivos",
       href: "/projects",
       icon: Target,
     },
     {
-      label: "Memoria",
+      label: "Decisiones Abiertas",
       value: data.openDecisionCount,
       detail: "decisiones abiertas",
       href: "/decisions",
@@ -75,7 +75,7 @@ export default async function DashboardPage() {
         <div className="panel-surface rounded-[32px] p-6 sm:p-8">
           <div className="kicker-pill">
             <Sparkles className="h-3 w-3" />
-            Cockpit del presente
+            Tu Día
           </div>
           <h1 className="title-balance mt-5 text-4xl font-semibold tracking-tight text-[var(--foreground)] sm:text-5xl">
             {greeting()}
@@ -84,7 +84,7 @@ export default async function DashboardPage() {
             {formatLongDate(new Date())}
           </p>
           <p className="title-balance mt-6 max-w-2xl text-base leading-relaxed text-[var(--muted-foreground)] sm:text-lg">
-            Este tablero no intenta mostrarlo todo. Solo lo que necesita una mirada clara: presion, siguiente movimiento y señales de donde se esta yendo la energia.
+            Vistazo general de tus tareas y frentes abiertos. Manten el sistema actualizado para liberar tu mente.
           </p>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -115,12 +115,12 @@ export default async function DashboardPage() {
         <form action={upsertDailyLogAction} className="panel-surface rounded-[32px] p-6 sm:p-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p className="eyebrow">Check-in diario</p>
+              <p className="eyebrow">Registro Diario</p>
               <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
-                Cerrar el dia sin friccion
+                Cerrar el día
               </h2>
               <p className="mt-3 max-w-xl text-sm leading-relaxed text-[var(--muted-foreground)]">
-                Un log breve para que el dashboard no solo mida output: tambien conserve energia, foco y pequeñas victorias.
+                Registra cómo estuvo tu foco y qué lograste hoy para medir tu energía a largo plazo.
               </p>
             </div>
             {data.dailyLog && <div className="kicker-pill">Guardado hoy</div>}
@@ -205,13 +205,13 @@ export default async function DashboardPage() {
           <section className="panel-surface rounded-[30px] p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="eyebrow">Ejecutar</p>
+                <p className="eyebrow">Próximos pasos</p>
                 <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
-                  Lo mas visible para hoy
+                  Tareas Prioritarias
                 </h2>
               </div>
               <Link href="/actions" className="text-sm font-medium text-[var(--foreground)] hover:underline">
-                Abrir motor de ejecucion
+                Ver todas las tareas
               </Link>
             </div>
 
@@ -248,11 +248,11 @@ export default async function DashboardPage() {
               <div>
                 <p className="eyebrow">Proyectos</p>
                 <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
-                  Donde vive la traccion
+                  Progreso de Proyectos
                 </h2>
               </div>
               <Link href="/projects" className="text-sm font-medium text-[var(--foreground)] hover:underline">
-                Ver portafolio
+                Ver todos
               </Link>
             </div>
 
@@ -292,7 +292,7 @@ export default async function DashboardPage() {
               <div>
                 <p className="eyebrow">Conocimiento</p>
                 <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
-                  Lo que esta madurando
+                  Conocimiento Reciente
                 </h2>
               </div>
               <Library className="h-5 w-5 text-[var(--muted-foreground)]" />
@@ -314,12 +314,12 @@ export default async function DashboardPage() {
           </section>
 
           <section className="panel-surface rounded-[30px] p-6">
-            <p className="eyebrow">Review readiness</p>
+            <p className="eyebrow">Métricas del Sistema</p>
             <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
-              Claridad sin culpa
+              Estado de tu Sistema
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">
-              Antes de revisar, conviene mirar la presion real del sistema: backlog de captura, proyectos vivos y decisiones todavia abiertas.
+              Antes de hacer la review semanal, asegúrate de procesar todo lo que está pendiente.
             </p>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-3">

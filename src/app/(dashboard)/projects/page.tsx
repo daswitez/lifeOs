@@ -2,6 +2,8 @@ import { PROJECT_STATUSES, TASK_PRIORITIES, TASK_PRIORITY_LABELS } from "@/lib/d
 import { CreateEntityModal } from "@/components/forms/create-entity-modal";
 import { createProjectAction } from "@/server/actions/lifeos";
 import { getProjectsData } from "@/server/queries/lifeos";
+import Link from "next/link";
+import { EditProjectModal } from "@/components/forms/edit-project-modal";
 
 function formatDate(value: string | null) {
   if (!value) return "Sin target";
@@ -102,6 +104,20 @@ export default async function ProjectsPage() {
                     </select>
                   </label>
                   <label className="block">
+                    <span className="eyebrow">Area</span>
+                    <select
+                      name="area_id"
+                      className="mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-3 py-4 text-sm text-[var(--foreground)] outline-none"
+                    >
+                      <option value="">No area</option>
+                      {data.areas.map((area) => (
+                        <option key={area.id} value={area.id}>
+                          {area.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="block">
                     <span className="eyebrow">Prioridad</span>
                     <select
                       name="priority"
@@ -126,12 +142,25 @@ export default async function ProjectsPage() {
         {data.projects.map((project) => (
           <article
             key={project.id}
-            className="panel-surface group flex flex-col rounded-[30px] p-6 transition-all hover:-translate-y-0.5"
+            className="panel-surface group flex h-full flex-col rounded-[30px] p-6 transition-all hover:-translate-y-1 hover:border-[var(--foreground)]/15 relative"
           >
-            <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start justify-between gap-3 relative z-10">
               <div>
                 <p className="eyebrow">{project.areaName}</p>
-                <h2 className="mt-3 text-xl font-semibold text-[var(--foreground)]">{project.title}</h2>
+                <div className="flex items-center gap-2 mt-3">
+                  <Link href={`/projects/${project.id}`} className="text-xl font-semibold text-[var(--foreground)] hover:underline">
+                    {project.title}
+                  </Link>
+                  <EditProjectModal project={{
+                    id: project.id,
+                    title: project.title,
+                    description: project.description,
+                    status: project.status,
+                    priority: project.priority,
+                    targetDate: project.targetDate,
+                    area_id: project.areaId
+                  }} areas={data.areas} />
+                </div>
               </div>
               <span className="kicker-pill">{project.status}</span>
             </div>

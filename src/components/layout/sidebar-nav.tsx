@@ -12,6 +12,7 @@ import {
   LayoutDashboard,
   Library,
   Search,
+  Layers,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -29,6 +30,7 @@ const NAV_ITEMS: NavItem[] = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/" },
   { icon: Inbox, label: "Inbox", href: "/inbox" },
   { icon: CheckSquare, label: "Actions", href: "/actions" },
+  { icon: Layers, label: "Areas", href: "/areas" },
   { icon: FolderKanban, label: "Projects", href: "/projects" },
   { icon: Compass, label: "Decisions", href: "/decisions" },
   { divider: true },
@@ -42,6 +44,7 @@ const MOBILE_ITEMS: NavLink[] = [
   { icon: LayoutDashboard, label: "Home", href: "/" },
   { icon: Inbox, label: "Inbox", href: "/inbox" },
   { icon: CheckSquare, label: "Actions", href: "/actions" },
+  { icon: Layers, label: "Areas", href: "/areas" },
   { icon: FolderKanban, label: "Projects", href: "/projects" },
   { icon: Search, label: "Know", href: "/knowledge" },
 ];
@@ -72,9 +75,6 @@ export function SidebarNav({ inboxCount }: { inboxCount: number }) {
             </div>
             <div className="h-2.5 w-2.5 rounded-full bg-[var(--accent)] shadow-[0_0_20px_rgba(28,63,54,0.45)]" />
           </div>
-          <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">
-            Captura, clarifica y ejecuta desde un mismo mapa.
-          </p>
         </div>
 
         <nav className="flex flex-1 flex-col gap-1.5">
@@ -126,21 +126,7 @@ export function SidebarNav({ inboxCount }: { inboxCount: number }) {
           })}
         </nav>
 
-        <div className="soft-rule mt-auto px-2 pt-5">
-          <p className="eyebrow">Workflow</p>
-          <div className="mt-3 space-y-2">
-            {[
-              "1. Captura lo que aparezca",
-              "2. Clarifica el inbox",
-              "3. Activa lo que mueve hoy",
-              "4. Revisa y recalibra",
-            ].map((item) => (
-              <p key={item} className="text-xs leading-relaxed text-[var(--muted-foreground)]">
-                {item}
-              </p>
-            ))}
-          </div>
-        </div>
+
       </aside>
 
       <nav className="fixed inset-x-3 bottom-3 z-40 rounded-[28px] border border-[var(--border)] bg-[color:color-mix(in_srgb,var(--surface-strong)_88%,transparent)] p-2 shadow-[var(--shadow-soft)] backdrop-blur-xl md:hidden">

@@ -100,6 +100,36 @@ export async function updateTaskStatusAction(formData: FormData) {
   revalidate(["/", "/actions", "/inbox", "/projects"]);
 }
 
+export async function updateTaskAction(formData: FormData) {
+  const { supabase } = await getAuthedContext();
+  const id = text(formData, "id");
+  if (!id) throw new Error("Task ID is required.");
+
+  const title = text(formData, "title");
+  if (!title) throw new Error("Task title is required.");
+
+  const status = text(formData, "status") as TaskStatus;
+
+  const patch: any = {
+    title,
+    status,
+    priority: text(formData, "priority") as TaskPriority,
+    project_id: optionalText(formData, "project_id"),
+    due_date: optionalTimestampFromDate(formData, "due_date"),
+  };
+
+  if (status === "done") {
+    patch.completed_at = new Date().toISOString();
+  } else {
+    patch.completed_at = null;
+  }
+
+  const { error } = await supabase.from("tasks").update(patch).eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidate(["/", "/actions", "/inbox", "/projects"]);
+}
+
 export async function createProjectAction(formData: FormData) {
   const { supabase, userId } = await getAuthedContext();
   const title = text(formData, "title");
@@ -115,11 +145,34 @@ export async function createProjectAction(formData: FormData) {
     status: text(formData, "status") || "active",
     priority: text(formData, "priority") || "medium",
     target_date: optionalText(formData, "target_date"),
+    area_id: optionalText(formData, "area_id"),
   });
 
   if (error) throw new Error(error.message);
 
   revalidate(["/", "/projects"]);
+}
+
+export async function updateProjectAction(formData: FormData) {
+  const { supabase, userId } = await getAuthedContext();
+  const id = text(formData, "id");
+  const title = text(formData, "title");
+  
+  if (!id || !title) throw new Error("Project ID and title are required.");
+
+  const patch = {
+    title,
+    description: optionalText(formData, "description"),
+    status: text(formData, "status") || "active",
+    priority: text(formData, "priority") || "medium",
+    target_date: optionalText(formData, "target_date"),
+    area_id: optionalText(formData, "area_id"),
+  };
+
+  const { error } = await supabase.from("projects").update(patch).eq("id", id).eq("user_id", userId);
+  if (error) throw new Error(error.message);
+
+  revalidate(["/", "/projects", "/actions", "/inbox"]);
 }
 
 export async function createNoteAction(formData: FormData) {
@@ -136,6 +189,7 @@ export async function createNoteAction(formData: FormData) {
     content: text(formData, "content"),
     summary: optionalText(formData, "summary"),
     type: (text(formData, "type") || "plain") as NoteType,
+    project_id: optionalText(formData, "project_id"),
   });
 
   if (error) throw new Error(error.message);
@@ -216,4 +270,68 @@ export async function upsertDailyLogAction(formData: FormData) {
   if (error) throw new Error(error.message);
 
   revalidate(["/", "/review"]);
+}
+
+export async function createAreaAction(formData: FormData) {
+  const { supabase, userId } = await getAuthedContext();
+  const name = text(formData, "name");
+
+  if (!name) {
+    throw new Error("Area name is required.");
+  }
+
+  const { error } = await supabase.from("areas").insert({
+    user_id: userId,
+    name,
+    description: optionalText(formData, "description"),
+    type: (text(formData, "type") || "other") as import("@/lib/domain").AreaType,
+    color: optionalText(formData, "color"),
+    icon: optionalText(formData, "icon"),
+  });
+
+  if (error) throw new Error(error.message);
+
+  revalidate(["/", "/areas", "/projects", "/inbox"]);
+}
+
+export async function processInboxItemAction(formData: FormData) {
+  const { supabase, userId } = await getAuthedContext();
+  const id = text(formData, "id");
+  const kind = text(formData, "kind");
+  const actionType = text(formData, "actionType"); // 'activate' | 'archive'
+
+  if (!id || !kind || !actionType) {
+    throw new Error("Missing processing parameters required");
+  }
+
+  let error = null;
+
+  if (actionType === "activate") {
+    if (kind === "task") {
+      const { error: err } = await supabase.from("tasks").update({ status: "todo" }).eq("id", id).eq("user_id", userId);
+      error = err;
+    } else if (kind === "note") {
+      // Activating an idea note makes it an atomic note for active knowledge
+      const { error: err } = await supabase.from("notes").update({ type: "atomic" }).eq("id", id).eq("user_id", userId);
+      error = err;
+    }
+  } else if (actionType === "archive") {
+    if (kind === "task") {
+      const { error: err } = await supabase.from("tasks").update({ status: "archived" }).eq("id", id).eq("user_id", userId);
+      error = err;
+    } else if (kind === "note") {
+      const { error: err } = await supabase.from("notes").update({ is_archived: true }).eq("id", id).eq("user_id", userId);
+      error = err;
+    } else if (kind === "resource") {
+      const { error: err } = await supabase.from("resources").update({ is_archived: true }).eq("id", id).eq("user_id", userId);
+      error = err;
+    } else if (kind === "decision") {
+      const { error: err } = await supabase.from("decisions").update({ status: "superseded" }).eq("id", id).eq("user_id", userId);
+      error = err;
+    }
+  }
+
+  if (error) throw new Error(error.message);
+
+  revalidate(["/", "/inbox", "/actions", "/knowledge", "/resources", "/decisions"]);
 }

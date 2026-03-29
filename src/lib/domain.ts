@@ -149,3 +149,14 @@ export const LOG_ENERGY_LABELS: Record<LogEnergy, string> = {
   high: "High",
   very_high: "Very High",
 };
+
+export const AREA_TYPE_LABELS: Record<AreaType, string> = {
+  life: "Life",
+  work: "Work",
+  health: "Health",
+  learning: "Learning",
+  finance: "Finance",
+  relationships: "Relationships",
+  personal: "Personal",
+  other: "Other",
+};

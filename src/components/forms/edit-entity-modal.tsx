@@ -2,31 +2,31 @@
 
 import { useEffect, useState, useTransition, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { Plus, X } from "lucide-react";
+import { Settings2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-type CreateEntityModalProps = {
+type EditEntityModalProps = {
   title: string;
   description: string;
-  triggerLabel: string;
   submitLabel: string;
   pendingLabel: string;
   action: (formData: FormData) => Promise<void>;
   children: ReactNode;
   className?: string;
+  triggerIcon?: ReactNode;
 };
 
-export function CreateEntityModal({
+export function EditEntityModal({
   title,
   description,
-  triggerLabel,
   submitLabel,
   pendingLabel,
   action,
   children,
   className,
-}: CreateEntityModalProps) {
+  triggerIcon = <Settings2 className="h-4 w-4" />,
+}: EditEntityModalProps) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -56,17 +56,21 @@ export function CreateEntityModal({
         await action(formData);
         setOpen(false);
       } catch (submitError) {
-        setError(submitError instanceof Error ? submitError.message : "No se pudo guardar");
+        setError(submitError instanceof Error ? submitError.message : "Failed to save");
       }
     });
   };
 
   return (
     <>
-      <Button className="rounded-full px-5" onClick={() => setOpen(true)}>
-        <Plus className="mr-2 h-4 w-4" />
-        {triggerLabel}
-      </Button>
+      <button
+        type="button"
+        title="Edit settings"
+        className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 rounded-full border border-[var(--border)] bg-transparent flex items-center justify-center text-[var(--muted-foreground)] hover:border-[var(--foreground)] hover:text-[var(--foreground)]"
+        onClick={() => setOpen(true)}
+      >
+        {triggerIcon}
+      </button>
 
       {open && mounted && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6">
@@ -77,10 +81,10 @@ export function CreateEntityModal({
             onClick={() => setOpen(false)}
           />
 
-          <div className={cn("panel-surface relative z-10 w-full max-w-3xl rounded-[32px] p-6 sm:p-8", className)}>
+          <div className={cn("panel-surface relative z-10 w-full max-w-3xl rounded-[32px] p-6 sm:p-8 text-left", className)}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="eyebrow">Crear</p>
+                <p className="eyebrow">Settings</p>
                 <h2 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">{title}</h2>
                 <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--muted-foreground)]">
                   {description}
@@ -104,15 +108,12 @@ export function CreateEntityModal({
                 </div>
               )}
 
-              <div className="soft-rule mt-8 flex flex-col gap-3 pt-5 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-sm text-[var(--muted-foreground)]">
-                  Mantiene el canvas limpio y deja el contexto principal visible hasta que decidas crear.
-                </p>
+              <div className="soft-rule mt-8 flex flex-col gap-3 pt-5 sm:flex-row sm:items-center sm:justify-end">
                 <div className="flex gap-3">
                   <Button type="button" variant="outline" className="rounded-full px-5" onClick={() => setOpen(false)}>
-                    Cancelar
+                    Cancel
                   </Button>
-                  <Button type="submit" className="rounded-full px-5" disabled={isPending}>
+                  <Button type="submit" className="rounded-full px-5 text-[var(--background)] bg-[var(--foreground)] hover:bg-[var(--foreground)]/90" disabled={isPending}>
                     {isPending ? pendingLabel : submitLabel}
                   </Button>
                 </div>
