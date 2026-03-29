@@ -2,18 +2,27 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
+import type {
+  LogEnergy,
+  NoteType,
+  ResourceType,
+  StorageMode,
+  TaskPriority,
+  TaskStatus,
+} from "@/lib/domain"
 
 export type CapturePayload = {
   type: "task" | "note" | "resource" | "decision";
   title: string;
   // Dynamic Fields
-  status?: string;
-  priority?: string;
-  energy?: string;
+  status?: TaskStatus;
+  priority?: TaskPriority;
+  energy?: LogEnergy;
   estimatedMinutes?: number;
-  noteType?: string;
-  storageMode?: string;
-  resourceType?: string;
+  noteType?: NoteType;
+  storageMode?: StorageMode;
+  resourceType?: ResourceType;
+  resourceLocation?: string;
   expectedOutcome?: string;
 }
 
@@ -45,20 +54,24 @@ export async function captureEntityToDB(data: CapturePayload) {
         const { error: noteErr } = await supabase.from("notes").insert({
           user_id: userId,
           title: data.title,
-          type: data.noteType || "fleeting",
+          type: data.noteType || "plain",
           content: "" // Draft is empty by default
         });
         if (noteErr) throw noteErr;
         break;
 
       case "resource":
+        if (!data.resourceLocation?.trim()) {
+          throw new Error("Resource location is required.");
+        }
+
         const { error: resErr } = await supabase.from("resources").insert({
            user_id: userId,
            title: data.title,
            storage_mode: data.storageMode || "external",
            type: data.resourceType || "link",
-           external_url: data.storageMode === "external" ? "https://example.com" : null,
-           internal_path: data.storageMode === "internal" ? "/placeholder" : null
+           external_url: data.storageMode === "external" ? data.resourceLocation : null,
+           internal_path: data.storageMode === "internal" ? data.resourceLocation : null
         });
         if (resErr) throw resErr;
         break;
@@ -78,8 +91,9 @@ export async function captureEntityToDB(data: CapturePayload) {
     revalidatePath("/", "layout");
     return { success: true };
     
-  } catch (error: any) {
-    console.error("Capture Error:", error.message);
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown capture error";
+    console.error("Capture Error:", message);
+    return { success: false, error: message };
   }
 }

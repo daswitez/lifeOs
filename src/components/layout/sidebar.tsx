@@ -8,13 +8,26 @@ import {
   Database,
   Library, 
   BarChart, 
-  Settings 
+  Settings,
+  type LucideIcon,
 } from "lucide-react";
 
 /**
  * Global Sidebar Navigation (Aligned to Full Database Schema)
  */
-const NAV_ITEMS = [
+type NavItem =
+  | {
+      icon: LucideIcon;
+      label: string;
+      href: string;
+      count?: number;
+      divider?: false;
+    }
+  | {
+      divider: true;
+    };
+
+const NAV_ITEMS: NavItem[] = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/" },
   { icon: Inbox, label: "Inbox", href: "/inbox", count: 3 },
   { icon: CheckSquare, label: "Actions", href: "/actions" },
@@ -49,14 +62,16 @@ export function Sidebar() {
             return <div key={`div-${idx}`} className="w-full h-px bg-[var(--border)]/50 my-3" />;
           }
 
+          const Icon = item.icon;
+
           return (
             <Link
               key={item.href}
-              href={item.href!}
+              href={item.href}
               className="group flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--accent-soft)] transition-colors"
             >
               <div className="flex items-center gap-3">
-                <item.icon className="w-4 h-4 text-[var(--muted-foreground)] opacity-70 group-hover:opacity-100 group-hover:text-[var(--foreground)] transition-all" />
+                <Icon className="w-4 h-4 text-[var(--muted-foreground)] opacity-70 group-hover:opacity-100 group-hover:text-[var(--foreground)] transition-all" />
                 {item.label}
               </div>
               {item.count && (

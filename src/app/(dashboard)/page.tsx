@@ -2,7 +2,7 @@ import { ExecutionPanel } from "@/components/dashboard/execution-panel";
 import { ProjectsPanel } from "@/components/dashboard/projects-panel";
 import { KnowledgePanel } from "@/components/dashboard/knowledge-panel";
 import { Button } from "@/components/ui/button";
-import { Smile, Target, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 export default function DashboardPage() {
   const dateStr = new Intl.DateTimeFormat('en-US', { 

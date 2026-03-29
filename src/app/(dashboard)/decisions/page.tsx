@@ -78,7 +78,7 @@ export default function DecisionsPage() {
                          <MapPin className="w-3 h-3" /> Expected Outcome
                        </h4>
                        <p className="text-sm text-[var(--foreground)]/80 leading-relaxed italic">
-                         "{dec.outcome}"
+                         &ldquo;{dec.outcome}&rdquo;
                        </p>
                      </div>
                    </div>

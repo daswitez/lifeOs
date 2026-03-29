@@ -51,7 +51,7 @@ export default function ActionsPage() {
         {/* SECTOR 2: TODAY (Premium Focus) */}
         <section>
           <h2 className="flex items-center gap-2 text-sm font-semibold text-[var(--foreground)] mb-4 tracking-widest uppercase">
-            <Flame className="w-4 h-4 text-orange-500/80" /> Today's Focus
+            <Flame className="w-4 h-4 text-orange-500/80" /> Today&apos;s Focus
           </h2>
           <div className="flex flex-col border border-[var(--border)] rounded-xl overflow-hidden bg-[var(--card)] shadow-sm">
             {todayTasks.map((task, idx) => (

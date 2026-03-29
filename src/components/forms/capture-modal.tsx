@@ -5,6 +5,26 @@ import { CornerDownLeft, Inbox as InboxIcon, Tag, Link, FileText, Compass, Loade
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { captureEntityToDB } from "@/lib/actions/capture";
+import {
+  LOG_ENERGIES,
+  LOG_ENERGY_LABELS,
+  NOTE_TYPES,
+  NOTE_TYPE_LABELS,
+  RESOURCE_TYPES,
+  RESOURCE_TYPE_LABELS,
+  STORAGE_MODES,
+  STORAGE_MODE_LABELS,
+  TASK_PRIORITIES,
+  TASK_PRIORITY_LABELS,
+  TASK_STATUSES,
+  TASK_STATUS_LABELS,
+  type LogEnergy,
+  type NoteType,
+  type ResourceType,
+  type StorageMode,
+  type TaskPriority,
+  type TaskStatus,
+} from "@/lib/domain";
 
 type EntityType = "task" | "note" | "resource" | "decision";
 
@@ -17,15 +37,16 @@ export function CaptureModal() {
   const [isPending, startTransition] = useTransition();
 
   // Form states mapping DB enums
-  const [taskStatus, setTaskStatus] = useState("inbox");
-  const [priority, setPriority] = useState("medium");
-  const [energy, setEnergy] = useState("low");
+  const [taskStatus, setTaskStatus] = useState<TaskStatus>("inbox");
+  const [priority, setPriority] = useState<TaskPriority>("medium");
+  const [energy, setEnergy] = useState<LogEnergy>("low");
   const [estMinutes, setEstMinutes] = useState("");
   
-  const [noteType, setNoteType] = useState("fleeting");
+  const [noteType, setNoteType] = useState<NoteType>("plain");
   
-  const [resStorage, setResStorage] = useState("external");
-  const [resType, setResType] = useState("link");
+  const [resStorage, setResStorage] = useState<StorageMode>("external");
+  const [resType, setResType] = useState<ResourceType>("link");
+  const [resourceLocation, setResourceLocation] = useState("");
   
   const [expectedOutcome, setExpectedOutcome] = useState("");
 
@@ -61,11 +82,13 @@ export function CaptureModal() {
           noteType,
           storageMode: resStorage,
           resourceType: resType,
+          resourceLocation,
           expectedOutcome
        });
 
        if (res.success) {
          setInputValue("");
+         setResourceLocation("");
          setIsOpen(false); // Close on success
        } else {
          alert("Error capturing data: " + res.error);
@@ -116,46 +139,64 @@ export function CaptureModal() {
         <div className="px-4 py-3 bg-[var(--background)] flex flex-wrap gap-3 border-b border-[var(--border)] border-dashed">
           {entityType === "task" && (
             <>
-              <select value={taskStatus} onChange={e => setTaskStatus(e.target.value)} className="bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] text-xs rounded-md px-2 py-1.5 focus:outline-none">
-                <option value="inbox">Status: Inbox</option>
-                <option value="todo">Status: To Do</option>
-                <option value="in_progress">Status: In Progress</option>
+              <select value={taskStatus} onChange={(e) => setTaskStatus(e.target.value as TaskStatus)} className="bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] text-xs rounded-md px-2 py-1.5 focus:outline-none">
+                {TASK_STATUSES.map((value) => (
+                  <option key={value} value={value}>
+                    {`Status: ${TASK_STATUS_LABELS[value]}`}
+                  </option>
+                ))}
               </select>
-              <select value={priority} onChange={e => setPriority(e.target.value)} className="bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] text-xs rounded-md px-2 py-1.5 focus:outline-none">
-                <option value="low">Priority: Low</option>
-                <option value="medium">Priority: Medium</option>
-                <option value="high">Priority: High</option>
-                <option value="urgent">Priority: Urgent ⚡</option>
+              <select value={priority} onChange={(e) => setPriority(e.target.value as TaskPriority)} className="bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] text-xs rounded-md px-2 py-1.5 focus:outline-none">
+                {TASK_PRIORITIES.map((value) => (
+                  <option key={value} value={value}>
+                    {`Priority: ${TASK_PRIORITY_LABELS[value]}`}
+                  </option>
+                ))}
               </select>
-              <select value={energy} onChange={e => setEnergy(e.target.value)} className="bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] text-xs rounded-md px-2 py-1.5 focus:outline-none">
-                <option value="low">Energy: Low</option>
-                <option value="medium">Energy: Medium</option>
-                <option value="high">Energy: High</option>
+              <select value={energy} onChange={(e) => setEnergy(e.target.value as LogEnergy)} className="bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] text-xs rounded-md px-2 py-1.5 focus:outline-none">
+                {LOG_ENERGIES.map((value) => (
+                  <option key={value} value={value}>
+                    {`Energy: ${LOG_ENERGY_LABELS[value]}`}
+                  </option>
+                ))}
               </select>
               <input type="number" placeholder="Est. Mins" value={estMinutes} onChange={e => setEstMinutes(e.target.value)} className="w-24 bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] text-xs rounded-md px-2 py-1.5 outline-none" />
             </>
           )}
 
           {entityType === "note" && (
-            <select value={noteType} onChange={e => setNoteType(e.target.value)} className="bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] text-xs rounded-md px-2 py-1.5 focus:outline-none">
-                <option value="fleeting">Type: Fleeting</option>
-                <option value="literature">Type: Literature</option>
-                <option value="atomic">Type: Atomic</option>
-                <option value="journal">Type: Journal</option>
+            <select value={noteType} onChange={(e) => setNoteType(e.target.value as NoteType)} className="bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] text-xs rounded-md px-2 py-1.5 focus:outline-none">
+                {NOTE_TYPES.map((value) => (
+                  <option key={value} value={value}>
+                    {`Type: ${NOTE_TYPE_LABELS[value]}`}
+                  </option>
+                ))}
             </select>
           )}
 
           {entityType === "resource" && (
             <>
-              <select value={resStorage} onChange={e => setResStorage(e.target.value)} className="bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] text-xs rounded-md px-2 py-1.5 focus:outline-none">
-                  <option value="external">Storage: External Link</option>
-                  <option value="internal">Storage: Internal (Upload)</option>
+              <select value={resStorage} onChange={(e) => setResStorage(e.target.value as StorageMode)} className="bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] text-xs rounded-md px-2 py-1.5 focus:outline-none">
+                  {STORAGE_MODES.map((value) => (
+                    <option key={value} value={value}>
+                      {`Storage: ${STORAGE_MODE_LABELS[value]}`}
+                    </option>
+                  ))}
               </select>
-              <select value={resType} onChange={e => setResType(e.target.value)} className="bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] text-xs rounded-md px-2 py-1.5 focus:outline-none">
-                  <option value="link">Type: Link</option>
-                  <option value="pdf">Type: PDF</option>
-                  <option value="book">Type: Book</option>
+              <select value={resType} onChange={(e) => setResType(e.target.value as ResourceType)} className="bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] text-xs rounded-md px-2 py-1.5 focus:outline-none">
+                  {RESOURCE_TYPES.map((value) => (
+                    <option key={value} value={value}>
+                      {`Type: ${RESOURCE_TYPE_LABELS[value]}`}
+                    </option>
+                  ))}
               </select>
+              <input
+                type="text"
+                value={resourceLocation}
+                onChange={(e) => setResourceLocation(e.target.value)}
+                placeholder={resStorage === "external" ? "https://..." : "storage/path/file.pdf"}
+                className="min-w-[220px] flex-1 bg-[var(--card)] border border-[var(--border)] text-[var(--foreground)] text-xs rounded-md px-2 py-1.5 outline-none"
+              />
             </>
           )}
 
@@ -177,7 +218,7 @@ export function CaptureModal() {
              <span className="hidden sm:inline-flex text-[10px] font-mono font-medium text-[var(--muted-foreground)]">
                 Press Enter to save
              </span>
-             <Button size="sm" className="h-8 gap-2 bg-[var(--foreground)] text-[var(--background)] hover:opacity-90" onClick={handleCapture} disabled={isPending || !inputValue.trim()}>
+             <Button size="sm" className="h-8 gap-2 bg-[var(--foreground)] text-[var(--background)] hover:opacity-90" onClick={handleCapture} disabled={isPending || !inputValue.trim() || (entityType === "resource" && !resourceLocation.trim())}>
                {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Save {entityType} <CornerDownLeft className="w-3 h-3 opacity-70" /></>}
              </Button>
           </div>

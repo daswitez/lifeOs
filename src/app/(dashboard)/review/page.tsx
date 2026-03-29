@@ -15,7 +15,7 @@ export default function ReviewPage() {
         </h1>
         
         <p className="text-lg text-[var(--muted-foreground)] mb-12 font-sans leading-relaxed">
-          It is time to empty your mind, review your unprocessed inboxes, capture the week's learnings, and align your next focus. Zero distractions.
+          It is time to empty your mind, review your unprocessed inboxes, capture the week&apos;s learnings, and align your next focus. Zero distractions.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">

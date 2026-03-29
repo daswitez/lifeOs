@@ -1,4 +1,4 @@
-import { Database, Link, FileText, Image, ExternalLink } from "lucide-react";
+import { Database, Link, FileText, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function ResourcesPage() {

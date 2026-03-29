@@ -1,4 +1,4 @@
-import { BookOpen, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function ConocimientoPage() {
