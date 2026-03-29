@@ -1,71 +1,353 @@
-import { ExecutionPanel } from "@/components/dashboard/execution-panel";
-import { ProjectsPanel } from "@/components/dashboard/projects-panel";
-import { KnowledgePanel } from "@/components/dashboard/knowledge-panel";
-import { Button } from "@/components/ui/button";
-import { ChevronRight } from "lucide-react";
+import Link from "next/link";
+import {
+  ChevronRight,
+  Compass,
+  Flame,
+  Inbox,
+  Library,
+  Sparkles,
+  Target,
+} from "lucide-react";
+import { LOG_ENERGIES, LOG_ENERGY_LABELS } from "@/lib/domain";
+import { SubmitButton } from "@/components/ui/submit-button";
+import { getDashboardData } from "@/server/queries/lifeos";
+import { upsertDailyLogAction } from "@/server/actions/lifeos";
 
-export default function DashboardPage() {
-  const dateStr = new Intl.DateTimeFormat('en-US', { 
-    weekday: 'long', 
-    month: 'long', 
-    day: 'numeric' 
-  }).format(new Date());
+function formatLongDate(value: string | Date) {
+  return new Intl.DateTimeFormat("es-BO", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  }).format(new Date(value));
+}
+
+function formatShortDate(value: string) {
+  return new Intl.DateTimeFormat("es-BO", {
+    month: "short",
+    day: "numeric",
+  }).format(new Date(value));
+}
+
+function greeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Buenos dias.";
+  if (hour < 19) return "Buenas tardes.";
+  return "Buenas noches.";
+}
+
+export default async function DashboardPage() {
+  const data = await getDashboardData();
+
+  const workflow = [
+    {
+      label: "Captura",
+      value: data.inboxCount,
+      detail: "items esperan aclaracion",
+      href: "/inbox",
+      icon: Inbox,
+    },
+    {
+      label: "Accion",
+      value: data.focusTasks.length,
+      detail: "palancas activas hoy",
+      href: "/actions",
+      icon: Flame,
+    },
+    {
+      label: "Traccion",
+      value: data.activeProjectCount,
+      detail: "proyectos estan vivos",
+      href: "/projects",
+      icon: Target,
+    },
+    {
+      label: "Memoria",
+      value: data.openDecisionCount,
+      detail: "decisiones abiertas",
+      href: "/decisions",
+      icon: Compass,
+    },
+  ];
 
   return (
-    <div className="flex flex-col min-h-full p-8 md:p-12 lg:p-16 gap-10">
-      
-      {/* Enhanced English Header with Daily Log Interactive Widget */}
-      <header className="flex flex-col xl:flex-row justify-between items-start xl:items-end border-b border-[var(--border)] pb-8 gap-8">
-        <div>
-           <h1 className="text-4xl font-semibold tracking-tight text-[var(--foreground)]">
-             Good Evening.
-           </h1>
-           <p className="mt-2 text-sm text-[var(--muted-foreground)] font-mono">
-             {dateStr}
-           </p>
-        </div>
-        
-        {/* Daily Log Functional Widget (Postgres Schema Alignment) */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center bg-[var(--card)] border border-[var(--border)] rounded-full px-4 py-2 shadow-sm">
-             <span className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)] mr-3 font-semibold">Mood</span>
-             <div className="flex gap-1">
-               {[1, 2, 3, 4, 5].map(score => (
-                 <button key={score} className={`w-5 h-5 rounded-full text-xs font-mono transition-colors ${score === 4 ? 'bg-[var(--foreground)] text-[var(--background)]' : 'bg-[var(--muted)] text-[var(--muted-foreground)] hover:bg-[var(--border)]'}`}>
-                   {score}
-                 </button>
-               ))}
-             </div>
+    <div className="flex min-h-full flex-col gap-8 px-5 py-6 sm:px-8 md:px-10 md:py-8 lg:px-12">
+      <section className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+        <div className="panel-surface rounded-[32px] p-6 sm:p-8">
+          <div className="kicker-pill">
+            <Sparkles className="h-3 w-3" />
+            Cockpit del presente
           </div>
-          <div className="flex items-center bg-[var(--card)] border border-[var(--border)] rounded-full px-4 py-2 shadow-sm">
-             <span className="text-[10px] uppercase tracking-widest text-[var(--muted-foreground)] mr-3 font-semibold">Focus</span>
-             <div className="flex gap-1">
-               {[1, 2, 3, 4, 5].map(score => (
-                 <button key={score} className={`w-5 h-5 rounded-full text-xs font-mono transition-colors ${score === 5 ? 'bg-orange-500 text-white' : 'bg-[var(--muted)] text-[var(--muted-foreground)] hover:bg-[var(--border)]'}`}>
-                   {score}
-                 </button>
-               ))}
-             </div>
+          <h1 className="title-balance mt-5 text-4xl font-semibold tracking-tight text-[var(--foreground)] sm:text-5xl">
+            {greeting()}
+          </h1>
+          <p className="mt-3 font-mono text-sm text-[var(--muted-foreground)]">
+            {formatLongDate(new Date())}
+          </p>
+          <p className="title-balance mt-6 max-w-2xl text-base leading-relaxed text-[var(--muted-foreground)] sm:text-lg">
+            Este tablero no intenta mostrarlo todo. Solo lo que necesita una mirada clara: presion, siguiente movimiento y señales de donde se esta yendo la energia.
+          </p>
+
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            {workflow.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="panel-quiet group rounded-3xl p-4 transition-all hover:-translate-y-0.5 hover:border-[var(--foreground)]/20"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] uppercase tracking-[0.28em] text-[var(--muted-foreground)]">
+                      {item.label}
+                    </span>
+                    <Icon className="h-4 w-4 text-[var(--muted-foreground)] group-hover:text-[var(--foreground)]" />
+                  </div>
+                  <p className="mt-4 text-3xl font-semibold text-[var(--foreground)]">{item.value}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
+                    {item.detail}
+                  </p>
+                </Link>
+              );
+            })}
           </div>
-          <Button variant="outline" className="rounded-full px-4 h-9 gap-2">
-            Log Wins <ChevronRight className="w-3 h-3" />
-          </Button>
-        </div>
-      </header>
-
-      {/* Strict Monochrome Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
-        
-        <div className="lg:col-span-2 flex flex-col gap-8">
-           <ExecutionPanel />
-           <ProjectsPanel />
         </div>
 
-        <div className="lg:col-span-1 lg:pl-8 lg:border-l border-[var(--border)] border-dashed">
-           <KnowledgePanel />
+        <form action={upsertDailyLogAction} className="panel-surface rounded-[32px] p-6 sm:p-8">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="eyebrow">Check-in diario</p>
+              <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
+                Cerrar el dia sin friccion
+              </h2>
+              <p className="mt-3 max-w-xl text-sm leading-relaxed text-[var(--muted-foreground)]">
+                Un log breve para que el dashboard no solo mida output: tambien conserve energia, foco y pequeñas victorias.
+              </p>
+            </div>
+            {data.dailyLog && <div className="kicker-pill">Guardado hoy</div>}
+          </div>
+
+          <div className="mt-7 grid gap-3 md:grid-cols-3">
+            <label className="panel-quiet rounded-2xl p-3 text-xs uppercase tracking-[0.22em] text-[var(--muted-foreground)]">
+              Mood
+              <select
+                name="mood"
+                defaultValue={data.dailyLog?.mood?.toString() ?? ""}
+                className="mt-3 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-3 text-sm normal-case tracking-normal text-[var(--foreground)] outline-none"
+              >
+                <option value="">Sin registro</option>
+                {[1, 2, 3, 4, 5].map((score) => (
+                  <option key={score} value={score}>
+                    {score}/5
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="panel-quiet rounded-2xl p-3 text-xs uppercase tracking-[0.22em] text-[var(--muted-foreground)]">
+              Focus
+              <select
+                name="focus_score"
+                defaultValue={data.dailyLog?.focus_score?.toString() ?? ""}
+                className="mt-3 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-3 text-sm normal-case tracking-normal text-[var(--foreground)] outline-none"
+              >
+                <option value="">Sin registro</option>
+                {[1, 2, 3, 4, 5].map((score) => (
+                  <option key={score} value={score}>
+                    {score}/5
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="panel-quiet rounded-2xl p-3 text-xs uppercase tracking-[0.22em] text-[var(--muted-foreground)]">
+              Energia
+              <select
+                name="energy"
+                defaultValue={data.dailyLog?.energy ?? ""}
+                className="mt-3 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-3 text-sm normal-case tracking-normal text-[var(--foreground)] outline-none"
+              >
+                <option value="">Sin registro</option>
+                {LOG_ENERGIES.map((energy) => (
+                  <option key={energy} value={energy}>
+                    {LOG_ENERGY_LABELS[energy]}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <label className="mt-4 block text-xs uppercase tracking-[0.22em] text-[var(--muted-foreground)]">
+            Wins del dia
+            <textarea
+              name="wins"
+              defaultValue={data.dailyLog?.wins ?? ""}
+              rows={3}
+              placeholder="Que salio bien hoy? Que merece quedarse en memoria?"
+              className="mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm normal-case tracking-normal text-[var(--foreground)] outline-none resize-none"
+            />
+          </label>
+
+          <div className="soft-rule mt-6 flex flex-col gap-4 pt-5 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-[var(--muted-foreground)]">
+              {data.lastWeeklyReview
+                ? `Ultima revision semanal: ${formatShortDate(data.lastWeeklyReview.week_end)}`
+                : "Aun no hay revision semanal guardada."}
+            </p>
+            <SubmitButton pendingLabel="Guardando..." className="rounded-full px-5">
+              Guardar check-in <ChevronRight className="h-3 w-3" />
+            </SubmitButton>
+          </div>
+        </form>
+      </section>
+
+      <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+        <div className="space-y-6">
+          <section className="panel-surface rounded-[30px] p-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="eyebrow">Ejecutar</p>
+                <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
+                  Lo mas visible para hoy
+                </h2>
+              </div>
+              <Link href="/actions" className="text-sm font-medium text-[var(--foreground)] hover:underline">
+                Abrir motor de ejecucion
+              </Link>
+            </div>
+
+            <div className="mt-6 space-y-3">
+              {data.focusTasks.length === 0 && (
+                <p className="panel-quiet rounded-2xl p-5 text-sm leading-relaxed text-[var(--muted-foreground)]">
+                  No hay acciones activas. Este es un buen momento para clarificar el inbox o activar una palanca concreta.
+                </p>
+              )}
+
+              {data.focusTasks.map((task) => (
+                <article
+                  key={task.id}
+                  className="panel-quiet rounded-2xl p-4 transition-all hover:-translate-y-0.5 hover:border-[var(--foreground)]/15"
+                >
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0">
+                      <p className="text-base font-semibold text-[var(--foreground)]">{task.title}</p>
+                      <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+                        {task.projectTitle ?? "Sin proyecto"} · {task.priority}
+                        {task.energy ? ` · ${task.energy}` : ""}
+                        {task.dueDate ? ` · vence ${formatShortDate(task.dueDate)}` : ""}
+                      </p>
+                    </div>
+                    <span className="kicker-pill">{task.status}</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="panel-surface rounded-[30px] p-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="eyebrow">Proyectos</p>
+                <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
+                  Donde vive la traccion
+                </h2>
+              </div>
+              <Link href="/projects" className="text-sm font-medium text-[var(--foreground)] hover:underline">
+                Ver portafolio
+              </Link>
+            </div>
+
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              {data.projectSummaries.map((project) => (
+                <article
+                  key={project.id}
+                  className="panel-quiet rounded-[28px] p-5 transition-all hover:-translate-y-0.5 hover:border-[var(--foreground)]/15"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="eyebrow">{project.areaName}</p>
+                      <h3 className="mt-3 text-lg font-semibold text-[var(--foreground)]">
+                        {project.title}
+                      </h3>
+                    </div>
+                    <span className="kicker-pill">{project.status}</span>
+                  </div>
+
+                  <p className="mt-4 text-sm leading-relaxed text-[var(--muted-foreground)]">
+                    {project.openTaskCount} abiertas / {project.taskCount} tareas
+                    {project.targetDate ? ` · target ${formatShortDate(project.targetDate)}` : ""}
+                  </p>
+
+                  <div className="mt-5 h-2 overflow-hidden rounded-full bg-[var(--accent-soft)]">
+                    <div className="h-full bg-[var(--foreground)]" style={{ width: `${project.progress}%` }} />
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
         </div>
 
-      </div>
+        <div className="space-y-6">
+          <section className="panel-surface rounded-[30px] p-6">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="eyebrow">Conocimiento</p>
+                <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
+                  Lo que esta madurando
+                </h2>
+              </div>
+              <Library className="h-5 w-5 text-[var(--muted-foreground)]" />
+            </div>
+
+            <div className="mt-6 space-y-4">
+              {data.recentKnowledge.map((note) => (
+                <article key={note.id} className="border-b border-dashed border-[var(--border)] pb-4 last:border-none last:pb-0">
+                  <p className="eyebrow">
+                    {note.type} · {formatShortDate(note.updatedAt)}
+                  </p>
+                  <h3 className="mt-3 font-serif text-xl text-[var(--foreground)]">{note.title}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">
+                    {note.preview}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="panel-surface rounded-[30px] p-6">
+            <p className="eyebrow">Review readiness</p>
+            <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
+              Claridad sin culpa
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">
+              Antes de revisar, conviene mirar la presion real del sistema: backlog de captura, proyectos vivos y decisiones todavia abiertas.
+            </p>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              <div className="panel-quiet rounded-2xl p-4">
+                <p className="eyebrow">Inbox</p>
+                <p className="mt-3 text-2xl font-semibold text-[var(--foreground)]">{data.inboxCount}</p>
+              </div>
+              <div className="panel-quiet rounded-2xl p-4">
+                <p className="eyebrow">Proyectos</p>
+                <p className="mt-3 text-2xl font-semibold text-[var(--foreground)]">{data.activeProjectCount}</p>
+              </div>
+              <div className="panel-quiet rounded-2xl p-4">
+                <p className="eyebrow">Decisiones</p>
+                <p className="mt-3 text-2xl font-semibold text-[var(--foreground)]">{data.openDecisionCount}</p>
+              </div>
+            </div>
+
+            <div className="soft-rule mt-6 flex flex-wrap gap-3 pt-5">
+              <Link href="/review" className="inline-flex items-center rounded-full bg-[var(--foreground)] px-4 py-2 text-sm font-medium text-[var(--background)] hover:opacity-90">
+                Abrir revision semanal
+              </Link>
+              <Link href="/inbox" className="inline-flex items-center rounded-full border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--background)]">
+                Vaciar inbox
+              </Link>
+            </div>
+          </section>
+        </div>
+      </section>
     </div>
   );
 }

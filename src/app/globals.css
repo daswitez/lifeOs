@@ -1,66 +1,58 @@
 @import "tailwindcss";
 
-/* 
-  LifeOS Theme V2: Premium Monolith
-  Inspirado en interfaces de élite (Linear, Things 3).
-  Estrictamente monocromático, puro contraste y tipografía agresiva.
-*/
-
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* LIGHT: Blanco espartano y contrastes afilados */
-  --background: #ffffff; 
-  --foreground: #09090b; /* Zinc 950 absoluto */
-  
+  --background: #f7f5f0;
+  --foreground: #121212;
   --card: #ffffff;
-  --card-foreground: #09090b;
-  
-  /* Bordes ultra sutiles. Apenas visibles para dividir secciones */
-  --border: #e4e4e7; /* Zinc 200 */
-  
-  /* Acento: Slate/Grafito de alta gama */
-  --accent: #18181b; /* Zinc 900 */
-  --accent-foreground: #fafafa;
-  --accent-soft: #f4f4f5; /* Zinc 100 */
-  
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a; /* Zinc 500 */
+  --card-foreground: #121212;
+  --border: #e3ddd1;
+  --accent: #18181b;
+  --accent-foreground: #f8f6f0;
+  --accent-soft: #f2eee6;
+  --muted: #f5f1e8;
+  --muted-foreground: #6e695f;
+  --surface: rgba(255, 255, 255, 0.88);
+  --surface-strong: rgba(255, 255, 255, 0.96);
+  --shadow-soft: 0 18px 50px rgba(18, 18, 18, 0.08);
+  --shadow-card: 0 10px 30px rgba(18, 18, 18, 0.06);
 }
 
-/* 
-  DARK MODE: El abismo.
-*/
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #000000; /* Negro puro OLED */
-    --foreground: #ededed;
-    
-    --card: #09090b; 
-    --card-foreground: #ededed;
-    
-    --border: #27272a; /* Zinc 800 */
-
-    --accent: #e4e4e7; /* El acento pasa a ser un blanco/gris metálico brillante */
-    --accent-foreground: #09090b;
-    --accent-soft: #18181b; /* Zinc 900 */
-    
-    --muted: #09090b;
-    --muted-foreground: #52525b; /* Zinc 600 */
+    --background: #0f1010;
+    --foreground: #f1ede4;
+    --card: #171818;
+    --card-foreground: #f1ede4;
+    --border: #2b2d2c;
+    --accent: #f1ede4;
+    --accent-foreground: #0f1010;
+    --accent-soft: #1d1f1e;
+    --muted: #151615;
+    --muted-foreground: #918c83;
+    --surface: rgba(23, 24, 24, 0.9);
+    --surface-strong: rgba(23, 24, 24, 0.96);
+    --shadow-soft: 0 22px 50px rgba(0, 0, 0, 0.28);
+    --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.22);
   }
 }
 
 .dark {
-  --background: #000000;
-  --foreground: #ededed;
-  --card: #09090b;
-  --card-foreground: #ededed;
-  --border: #27272a;
-  --accent: #e4e4e7;
-  --accent-foreground: #09090b;
-  --accent-soft: #18181b;
-  --muted: #09090b;
-  --muted-foreground: #52525b;
+  --background: #0f1010;
+  --foreground: #f1ede4;
+  --card: #171818;
+  --card-foreground: #f1ede4;
+  --border: #2b2d2c;
+  --accent: #f1ede4;
+  --accent-foreground: #0f1010;
+  --accent-soft: #1d1f1e;
+  --muted: #151615;
+  --muted-foreground: #918c83;
+  --surface: rgba(23, 24, 24, 0.9);
+  --surface-strong: rgba(23, 24, 24, 0.96);
+  --shadow-soft: 0 22px 50px rgba(0, 0, 0, 0.28);
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.22);
 }
 
 @theme inline {
@@ -74,43 +66,82 @@
   --color-accent-soft: var(--accent-soft);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-
-  /* Las mismas familias definidas en el layout de Next */
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
   --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif, "Segoe UI Emoji", "Noto Color Emoji";
   --font-serif: var(--font-serif), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
-/* Base Styles Generales */
 body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
-  
   overscroll-behavior-y: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar invisible pero funcional: premium feeling */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 9999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--muted-foreground);
 }
 
-/* Utilidad para la navegación superior flotante con blur */
 .glass-header {
-  background-color: color-mix(in srgb, var(--background) 80%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background-color: color-mix(in srgb, var(--surface-strong) 92%, transparent);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--border);
+}
+
+.panel-surface {
+  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--border) 92%, transparent);
+  box-shadow: var(--shadow-card);
+}
+
+.panel-quiet {
+  background: color-mix(in srgb, var(--card) 94%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 84%, transparent);
+}
+
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.title-balance {
+  text-wrap: balance;
+}
+
+.kicker-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+  color: var(--muted-foreground);
+  border-radius: 9999px;
+  padding: 0.4rem 0.8rem;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+}
+
+.soft-rule {
+  border-top: 1px dashed color-mix(in srgb, var(--border) 82%, transparent);
 }

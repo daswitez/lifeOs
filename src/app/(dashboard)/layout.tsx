@@ -7,18 +7,28 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    // Reemplaza el flex del layout raíz con esta estructura de 2 columnas donde Sidebar tiene ancho fijo
-    <div className="flex h-screen w-full overflow-hidden bg-[var(--background)]">
-      {/* Sidebar - Ocultable en móbiles y visible en md+ */}
+    <div className="flex h-screen w-full overflow-hidden">
       <Sidebar />
 
-      {/* Main Canvas - Ocupa todo el espacio restante con scroll independiente */}
-      <main className="flex-1 relative overflow-y-auto">
-        <div className="mx-auto max-w-6xl w-full h-full">
+      <main className="relative flex-1 overflow-y-auto">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute inset-x-0 top-0 h-64 bg-[var(--glow)]" />
+          <div className="absolute left-[10%] top-20 h-40 w-40 rounded-full bg-[color:color-mix(in_srgb,var(--accent)_10%,transparent)] blur-3xl" />
+          <div className="absolute bottom-24 right-[12%] h-48 w-48 rounded-full bg-[color:color-mix(in_srgb,var(--foreground)_6%,transparent)] blur-3xl" />
+        </div>
+
+        <div className="glass-header sticky top-0 z-30 flex items-center justify-between px-5 py-3 md:hidden">
+          <div>
+            <p className="eyebrow">LifeOS</p>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">Capture to clarity</p>
+          </div>
+          <div className="kicker-pill">Ctrl/Cmd + K</div>
+        </div>
+
+        <div className="relative mx-auto min-h-full w-full max-w-[1180px] pb-28 md:pb-10">
           {children}
         </div>
-        
-        {/* Componente Global Oculto que se activa con atajos o botones */}
+
         <CaptureModal />
       </main>
     </div>
