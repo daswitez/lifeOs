@@ -7,7 +7,7 @@ import { ManageResourceLinksModal } from "@/components/forms/manage-resource-lin
 
 function formatDate(value: string | null) {
   if (!value) return "No date";
-  return new Intl.DateTimeFormat("es-BO", {
+  return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",

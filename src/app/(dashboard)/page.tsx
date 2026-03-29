@@ -23,7 +23,7 @@ import { type ActionTask, getDashboardData } from "@/server/queries/lifeos";
 import { upsertDailyLogAction } from "@/server/actions/lifeos";
 
 function formatLongDate(value: string | Date) {
-  return new Intl.DateTimeFormat("es-BO", {
+  return new Intl.DateTimeFormat("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
@@ -31,16 +31,16 @@ function formatLongDate(value: string | Date) {
 }
 
 function formatShortDate(value: string) {
-  return new Intl.DateTimeFormat("es-BO", {
+  return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
   }).format(new Date(value));
 }
 
 function formatTaskTiming(task: ActionTask) {
-  if (task.scheduledFor) return `programada ${formatShortDate(task.scheduledFor)}`;
-  if (task.dueDate) return `vence ${formatShortDate(task.dueDate)}`;
-  return "sin fecha";
+  if (task.scheduledFor) return `scheduled ${formatShortDate(task.scheduledFor)}`;
+  if (task.dueDate) return `due ${formatShortDate(task.dueDate)}`;
+  return "no date";
 }
 
 function recurrenceLabel(rule: string | null) {
@@ -54,9 +54,9 @@ function recurrenceLabel(rule: string | null) {
 
 function greeting() {
   const hour = new Date().getHours();
-  if (hour < 12) return "Buenos dias.";
-  if (hour < 19) return "Buenas tardes.";
-  return "Buenas noches.";
+  if (hour < 12) return "Good morning.";
+  if (hour < 19) return "Good afternoon.";
+  return "Good evening.";
 }
 
 export default async function DashboardPage() {
@@ -64,44 +64,44 @@ export default async function DashboardPage() {
 
   const workflow = [
     {
-      label: "Hoy",
+      label: "Today",
       value: data.todayTasks.length,
-      detail: "tareas aterrizan hoy",
+      detail: "tasks landing today",
       href: "/actions",
       icon: CalendarClock,
     },
     {
-      label: "Esta Semana",
+      label: "This Week",
       value: data.weekTasks.length,
-      detail: "cosas se acumulan esta semana",
+      detail: "items stacking up this week",
       href: "/actions",
       icon: Clock3,
     },
     {
-      label: "Bandeja de Entrada",
+      label: "Inbox",
       value: data.inboxCount,
-      detail: "items esperan aclaracion",
+      detail: "items waiting for clarity",
       href: "/inbox",
       icon: Inbox,
     },
     {
-      label: "Tareas Activas",
+      label: "Active Tasks",
       value: data.focusTasks.length,
-      detail: "palancas activas hoy",
+      detail: "levers active right now",
       href: "/actions",
       icon: Flame,
     },
     {
-      label: "Decisiones Abiertas",
+      label: "Open Decisions",
       value: data.openDecisionCount,
-      detail: "decisiones abiertas",
+      detail: "decisions still open",
       href: "/decisions",
       icon: Compass,
     },
     {
-      label: "Proyectos en Curso",
+      label: "Active Projects",
       value: data.activeProjectCount,
-      detail: "proyectos estan vivos",
+      detail: "projects alive",
       href: "/projects",
       icon: Target,
     },
@@ -110,10 +110,10 @@ export default async function DashboardPage() {
   return (
     <div className="flex min-h-full flex-col gap-8 px-5 py-6 sm:px-8 md:px-10 md:py-8 lg:px-12">
       <section className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-        <div className="panel-surface rounded-[32px] p-6 sm:p-8">
+        <div className="panel-surface rounded-[32px] p-6 sm:p-8 anim-fade-in-up">
           <div className="kicker-pill">
             <Sparkles className="h-3 w-3" />
-            Tu Día
+            Your Day
           </div>
           <h1 className="title-balance mt-5 text-4xl font-semibold tracking-tight text-[var(--foreground)] sm:text-5xl">
             {greeting()}
@@ -122,23 +122,23 @@ export default async function DashboardPage() {
             {formatLongDate(new Date())}
           </p>
           <p className="title-balance mt-6 max-w-2xl text-base leading-relaxed text-[var(--muted-foreground)] sm:text-lg">
-            Vistazo general de tus tareas y frentes abiertos. Manten el sistema actualizado para liberar tu mente.
+            Overview of your tasks and open fronts. Keep the system updated to free your mind.
           </p>
 
-          <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-3 stagger">
             {workflow.map((item) => {
               const Icon = item.icon;
               return (
                 <Link
                   key={item.label}
                   href={item.href}
-                  className="panel-quiet group rounded-3xl p-4 transition-all hover:-translate-y-0.5 hover:border-[var(--foreground)]/20"
+                  className="panel-quiet group rounded-3xl p-4 transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-elevated)]"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] uppercase tracking-[0.28em] text-[var(--muted-foreground)]">
                       {item.label}
                     </span>
-                    <Icon className="h-4 w-4 text-[var(--muted-foreground)] group-hover:text-[var(--foreground)]" />
+                    <Icon className="h-4 w-4 text-[var(--muted-foreground)] transition-colors group-hover:text-[var(--accent-primary)]" />
                   </div>
                   <p className="mt-4 text-3xl font-semibold text-[var(--foreground)]">{item.value}</p>
                   <p className="mt-2 text-sm leading-relaxed text-[var(--muted-foreground)]">
@@ -150,18 +150,18 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <form action={upsertDailyLogAction} className="panel-surface rounded-[32px] p-6 sm:p-8">
+        <form action={upsertDailyLogAction} className="panel-surface rounded-[32px] p-6 sm:p-8 anim-fade-in-up" style={{ animationDelay: "80ms" }}>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p className="eyebrow">Registro Diario</p>
+              <p className="eyebrow">Daily Log</p>
               <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
-                Cerrar el día
+                Close the Day
               </h2>
               <p className="mt-3 max-w-xl text-sm leading-relaxed text-[var(--muted-foreground)]">
-                Registra cómo estuvo tu foco y qué lograste hoy para medir tu energía a largo plazo.
+                Log how your focus went and what you achieved today to measure your energy over time.
               </p>
             </div>
-            {data.dailyLog && <div className="kicker-pill">Guardado hoy</div>}
+            {data.dailyLog && <div className="kicker-pill">Saved today</div>}
           </div>
 
           <div className="mt-7 grid gap-3 md:grid-cols-3">
@@ -170,9 +170,9 @@ export default async function DashboardPage() {
               <select
                 name="mood"
                 defaultValue={data.dailyLog?.mood?.toString() ?? ""}
-                className="mt-3 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-3 text-sm normal-case tracking-normal text-[var(--foreground)] outline-none"
+                className="input-ring mt-3 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-3 text-sm normal-case tracking-normal text-[var(--foreground)]"
               >
-                <option value="">Sin registro</option>
+                <option value="">Not recorded</option>
                 {[1, 2, 3, 4, 5].map((score) => (
                   <option key={score} value={score}>
                     {score}/5
@@ -186,9 +186,9 @@ export default async function DashboardPage() {
               <select
                 name="focus_score"
                 defaultValue={data.dailyLog?.focus_score?.toString() ?? ""}
-                className="mt-3 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-3 text-sm normal-case tracking-normal text-[var(--foreground)] outline-none"
+                className="input-ring mt-3 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-3 text-sm normal-case tracking-normal text-[var(--foreground)]"
               >
-                <option value="">Sin registro</option>
+                <option value="">Not recorded</option>
                 {[1, 2, 3, 4, 5].map((score) => (
                   <option key={score} value={score}>
                     {score}/5
@@ -198,13 +198,13 @@ export default async function DashboardPage() {
             </label>
 
             <label className="panel-quiet rounded-2xl p-3 text-xs uppercase tracking-[0.22em] text-[var(--muted-foreground)]">
-              Energia
+              Energy
               <select
                 name="energy"
                 defaultValue={data.dailyLog?.energy ?? ""}
-                className="mt-3 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-3 text-sm normal-case tracking-normal text-[var(--foreground)] outline-none"
+                className="input-ring mt-3 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-3 text-sm normal-case tracking-normal text-[var(--foreground)]"
               >
-                <option value="">Sin registro</option>
+                <option value="">Not recorded</option>
                 {LOG_ENERGIES.map((energy) => (
                   <option key={energy} value={energy}>
                     {LOG_ENERGY_LABELS[energy]}
@@ -215,24 +215,24 @@ export default async function DashboardPage() {
           </div>
 
           <label className="mt-4 block text-xs uppercase tracking-[0.22em] text-[var(--muted-foreground)]">
-            Wins del dia
+            Today&apos;s wins
             <textarea
               name="wins"
               defaultValue={data.dailyLog?.wins ?? ""}
               rows={3}
-              placeholder="Que salio bien hoy? Que merece quedarse en memoria?"
-              className="mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm normal-case tracking-normal text-[var(--foreground)] outline-none resize-none"
+              placeholder="What went well today? What deserves to stay in memory?"
+              className="input-ring mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm normal-case tracking-normal text-[var(--foreground)] resize-none"
             />
           </label>
 
           <div className="soft-rule mt-6 flex flex-col gap-4 pt-5 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-[var(--muted-foreground)]">
               {data.lastWeeklyReview
-                ? `Ultima revision semanal: ${formatShortDate(data.lastWeeklyReview.week_end)}`
-                : "Aun no hay revision semanal guardada."}
+                ? `Last weekly review: ${formatShortDate(data.lastWeeklyReview.week_end)}`
+                : "No weekly review saved yet."}
             </p>
-            <SubmitButton pendingLabel="Guardando..." className="rounded-full px-5">
-              Guardar check-in <ChevronRight className="h-3 w-3" />
+            <SubmitButton pendingLabel="Saving..." className="rounded-full px-5">
+              Save check-in <ChevronRight className="h-3 w-3" />
             </SubmitButton>
           </div>
         </form>
@@ -243,33 +243,33 @@ export default async function DashboardPage() {
           <section className="panel-surface rounded-[30px] p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="eyebrow">Hoy</p>
+                <p className="eyebrow">Today</p>
                 <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
-                  Tablero de aterrizaje
+                  Landing Board
                 </h2>
               </div>
               <Link href="/actions" className="text-sm font-medium text-[var(--foreground)] hover:underline">
-                Ver todas las tareas
+                View all tasks
               </Link>
             </div>
 
             <div className="mt-6 space-y-3">
               {data.todayTasks.length === 0 && (
                 <p className="panel-quiet rounded-2xl p-5 text-sm leading-relaxed text-[var(--muted-foreground)]">
-                  Hoy no tiene una lista clara todavía. Programa tareas en `Actions` para que la home funcione como agenda operativa.
+                  Today doesn&apos;t have a clear list yet. Schedule tasks in Actions so the home works as your operational agenda.
                 </p>
               )}
 
               {data.todayTasks.map((task) => (
                 <article
                   key={task.id}
-                  className="panel-quiet rounded-2xl p-4 transition-all hover:-translate-y-0.5 hover:border-[var(--foreground)]/15"
+                  className="panel-quiet rounded-2xl p-4 transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]"
                 >
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
                       <p className="text-base font-semibold text-[var(--foreground)]">{task.title}</p>
                       <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-                        {task.projectTitle ?? "Sin proyecto"} · {TASK_PRIORITY_LABELS[task.priority]}
+                        {task.projectTitle ?? "No project"} · {TASK_PRIORITY_LABELS[task.priority]}
                         {task.energy ? ` · ${LOG_ENERGY_LABELS[task.energy]}` : ""}
                         {` · ${formatTaskTiming(task)}`}
                       </p>
@@ -277,14 +277,14 @@ export default async function DashboardPage() {
                         {task.isRecurring && (
                           <span className="kicker-pill">
                             <Repeat2 className="h-3 w-3" />
-                            {recurrenceLabel(task.recurrenceRule) ?? "Recurrente"}
+                            {recurrenceLabel(task.recurrenceRule) ?? "Recurring"}
                           </span>
                         )}
                         {task.estimatedMinutes && (
-                          <span className="kicker-pill">estimado {task.estimatedMinutes}m</span>
+                          <span className="kicker-pill">estimate {task.estimatedMinutes}m</span>
                         )}
                         {task.actualMinutes && (
-                          <span className="kicker-pill">real {task.actualMinutes}m</span>
+                          <span className="kicker-pill">actual {task.actualMinutes}m</span>
                         )}
                       </div>
                     </div>
@@ -298,9 +298,9 @@ export default async function DashboardPage() {
           <section className="panel-surface rounded-[30px] p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="eyebrow">Semana actual</p>
+                <p className="eyebrow">Current week</p>
                 <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
-                  Horizonte semanal
+                  Weekly Horizon
                 </h2>
               </div>
               <p className="text-sm text-[var(--muted-foreground)]">
@@ -312,7 +312,7 @@ export default async function DashboardPage() {
               <div className="space-y-3">
                 {data.weekTasks.length === 0 ? (
                   <p className="panel-quiet rounded-2xl p-5 text-sm leading-relaxed text-[var(--muted-foreground)]">
-                    La semana no tiene cola visible todavía. Puedes programar tareas con `scheduled_for` para convertir esto en un radar real.
+                    The week has no visible queue yet. Schedule tasks with a date to turn this into a real radar.
                   </p>
                 ) : (
                   data.weekTasks.map((task) => (
@@ -321,7 +321,7 @@ export default async function DashboardPage() {
                         <div className="min-w-0">
                           <p className="text-sm font-semibold text-[var(--foreground)]">{task.title}</p>
                           <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-                            {task.projectTitle ?? "Sin proyecto"} · {formatTaskTiming(task)}
+                            {task.projectTitle ?? "No project"} · {formatTaskTiming(task)}
                           </p>
                         </div>
                         <span className="kicker-pill">{TASK_PRIORITY_LABELS[task.priority]}</span>
@@ -333,16 +333,16 @@ export default async function DashboardPage() {
 
               <div className="space-y-3">
                 <article className="panel-quiet rounded-[28px] p-5">
-                  <p className="eyebrow">Revision semanal</p>
+                  <p className="eyebrow">Weekly review</p>
                   <h3 className="mt-3 text-lg font-semibold text-[var(--foreground)]">
-                    {data.lastWeeklyReview?.next_focus || "Todavia no definiste el siguiente foco"}
+                    {data.lastWeeklyReview?.next_focus || "Next focus not yet defined"}
                   </h3>
                   <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">
-                    {data.lastWeeklyReview?.summary || "La ultima review todavia no tiene un resumen guardado."}
+                    {data.lastWeeklyReview?.summary || "The latest review doesn't have a summary saved yet."}
                   </p>
                   <div className="mt-5 flex flex-wrap gap-2">
-                    <span className="kicker-pill">{data.overdueCount} vencidas</span>
-                    <span className="kicker-pill">{data.weeklyDecisionReviews.length} decisiones para revisar</span>
+                    <span className="kicker-pill">{data.overdueCount} overdue</span>
+                    <span className="kicker-pill">{data.weeklyDecisionReviews.length} decisions to review</span>
                   </div>
                 </article>
 
@@ -351,18 +351,18 @@ export default async function DashboardPage() {
                   <div className="mt-4 space-y-3">
                     {data.weeklyDecisionReviews.length === 0 && (
                       <p className="text-sm text-[var(--muted-foreground)]">
-                        Esta semana no hay decisiones abiertas con review_date cercana.
+                        No open decisions with an upcoming review date this week.
                       </p>
                     )}
                     {data.weeklyDecisionReviews.map((decision) => (
                       <Link
                         key={decision.id}
                         href={`/decisions/${decision.id}`}
-                        className="block rounded-2xl border border-[var(--border)] px-4 py-3 transition-all hover:border-[var(--foreground)]/15"
+                        className="block rounded-2xl border border-[var(--border)] px-4 py-3 transition-all hover:border-[var(--accent-primary)]/30 hover:shadow-sm"
                       >
                         <p className="text-sm font-semibold text-[var(--foreground)]">{decision.title}</p>
                         <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-                          review {decision.reviewDate ? formatShortDate(decision.reviewDate) : "sin fecha"}
+                          review {decision.reviewDate ? formatShortDate(decision.reviewDate) : "no date"}
                         </p>
                       </Link>
                     ))}
@@ -375,13 +375,13 @@ export default async function DashboardPage() {
           <section className="panel-surface rounded-[30px] p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="eyebrow">Proyectos</p>
+                <p className="eyebrow">Projects</p>
                 <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
-                  Progreso de Proyectos
+                  Project Progress
                 </h2>
               </div>
               <Link href="/projects" className="text-sm font-medium text-[var(--foreground)] hover:underline">
-                Ver todos
+                View all
               </Link>
             </div>
 
@@ -389,7 +389,7 @@ export default async function DashboardPage() {
               {data.projectSummaries.map((project) => (
                 <article
                   key={project.id}
-                  className="panel-quiet rounded-[28px] p-5 transition-all hover:-translate-y-0.5 hover:border-[var(--foreground)]/15"
+                  className="panel-quiet rounded-[28px] p-5 transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
@@ -402,12 +402,12 @@ export default async function DashboardPage() {
                   </div>
 
                   <p className="mt-4 text-sm leading-relaxed text-[var(--muted-foreground)]">
-                    {project.openTaskCount} abiertas / {project.taskCount} tareas
+                    {project.openTaskCount} open / {project.taskCount} tasks
                     {project.targetDate ? ` · target ${formatShortDate(project.targetDate)}` : ""}
                   </p>
 
                   <div className="mt-5 h-2 overflow-hidden rounded-full bg-[var(--accent-soft)]">
-                    <div className="h-full bg-[var(--foreground)]" style={{ width: `${project.progress}%` }} />
+                    <div className="progress-bar h-full rounded-full" style={{ width: `${project.progress}%` }} />
                   </div>
                 </article>
               ))}
@@ -419,9 +419,9 @@ export default async function DashboardPage() {
           <section className="panel-surface rounded-[30px] p-6">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="eyebrow">En movimiento</p>
+                <p className="eyebrow">In motion</p>
                 <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
-                  Tareas Prioritarias
+                  Priority Tasks
                 </h2>
               </div>
               <Flame className="h-5 w-5 text-[var(--muted-foreground)]" />
@@ -430,7 +430,7 @@ export default async function DashboardPage() {
             <div className="mt-6 space-y-3">
               {data.focusTasks.length === 0 && (
                 <p className="panel-quiet rounded-2xl p-5 text-sm leading-relaxed text-[var(--muted-foreground)]">
-                  No hay acciones activas. Este es un buen momento para clarificar el inbox o activar una palanca concreta.
+                  No active actions. This is a good time to clarify the inbox or activate a concrete lever.
                 </p>
               )}
 
@@ -440,7 +440,7 @@ export default async function DashboardPage() {
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-[var(--foreground)]">{task.title}</p>
                       <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-                        {task.projectTitle ?? "Sin proyecto"} · {TASK_STATUS_LABELS[task.status]}
+                        {task.projectTitle ?? "No project"} · {TASK_STATUS_LABELS[task.status]}
                       </p>
                     </div>
                     <span className="kicker-pill">{TASK_PRIORITY_LABELS[task.priority]}</span>
@@ -453,9 +453,9 @@ export default async function DashboardPage() {
           <section className="panel-surface rounded-[30px] p-6">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="eyebrow">Conocimiento</p>
+                <p className="eyebrow">Knowledge</p>
                 <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
-                  Conocimiento Reciente
+                  Recent Knowledge
                 </h2>
               </div>
               <Library className="h-5 w-5 text-[var(--muted-foreground)]" />
@@ -481,7 +481,7 @@ export default async function DashboardPage() {
               <div>
                 <p className="eyebrow">Vault</p>
                 <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
-                  Recursos Recientes
+                  Recent Resources
                 </h2>
               </div>
               <Library className="h-5 w-5 text-[var(--muted-foreground)]" />
@@ -492,7 +492,7 @@ export default async function DashboardPage() {
                 <Link
                   key={resource.id}
                   href={`/resources/${resource.id}`}
-                  className="block rounded-2xl border border-[var(--border)] px-4 py-4 transition-all hover:border-[var(--foreground)]/15"
+                  className="block rounded-2xl border border-[var(--border)] px-4 py-4 transition-all hover:border-[var(--accent-primary)]/30 hover:shadow-sm"
                 >
                   <p className="text-sm font-semibold text-[var(--foreground)]">{resource.title}</p>
                   <p className="mt-2 text-sm text-[var(--muted-foreground)]">
@@ -504,46 +504,46 @@ export default async function DashboardPage() {
           </section>
 
           <section className="panel-surface rounded-[30px] p-6">
-            <p className="eyebrow">Métricas del Sistema</p>
+            <p className="eyebrow">System Metrics</p>
             <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
-              Estado de tu Sistema
+              System Status
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">
-              Antes de hacer la review semanal, asegúrate de procesar todo lo que está pendiente.
+              Before running the weekly review, make sure to process everything that&apos;s pending.
             </p>
 
-            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+            <div className="mt-6 grid gap-3 sm:grid-cols-3 stagger">
               <div className="panel-quiet rounded-2xl p-4">
                 <p className="eyebrow">Inbox</p>
                 <p className="mt-3 text-2xl font-semibold text-[var(--foreground)]">{data.inboxCount}</p>
               </div>
               <div className="panel-quiet rounded-2xl p-4">
-                <p className="eyebrow">Proyectos</p>
+                <p className="eyebrow">Projects</p>
                 <p className="mt-3 text-2xl font-semibold text-[var(--foreground)]">{data.activeProjectCount}</p>
               </div>
               <div className="panel-quiet rounded-2xl p-4">
-                <p className="eyebrow">Decisiones</p>
+                <p className="eyebrow">Decisions</p>
                 <p className="mt-3 text-2xl font-semibold text-[var(--foreground)]">{data.openDecisionCount}</p>
               </div>
             </div>
 
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
               <div className="panel-quiet rounded-2xl p-4">
-                <p className="eyebrow">Vencidas</p>
+                <p className="eyebrow">Overdue</p>
                 <p className="mt-3 text-2xl font-semibold text-[var(--foreground)]">{data.overdueCount}</p>
               </div>
               <div className="panel-quiet rounded-2xl p-4">
-                <p className="eyebrow">Semana</p>
+                <p className="eyebrow">Week</p>
                 <p className="mt-3 text-2xl font-semibold text-[var(--foreground)]">{data.weekTasks.length}</p>
               </div>
             </div>
 
             <div className="soft-rule mt-6 flex flex-wrap gap-3 pt-5">
-              <Link href="/review" className="inline-flex items-center rounded-full bg-[var(--foreground)] px-4 py-2 text-sm font-medium text-[var(--background)] hover:opacity-90">
-                Abrir revision semanal
+              <Link href="/review" className="inline-flex items-center rounded-full bg-[var(--foreground)] px-4 py-2 text-sm font-medium text-[var(--background)] transition-opacity hover:opacity-90">
+                Open weekly review
               </Link>
-              <Link href="/inbox" className="inline-flex items-center rounded-full border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--background)]">
-                Vaciar inbox
+              <Link href="/inbox" className="inline-flex items-center rounded-full border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--accent-soft)]">
+                Clear inbox
               </Link>
             </div>
           </section>

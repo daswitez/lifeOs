@@ -51,7 +51,7 @@ export function CreateEntityModal({
         await action(formData);
         setOpen(false);
       } catch (submitError) {
-        setError(submitError instanceof Error ? submitError.message : "No se pudo guardar");
+        setError(submitError instanceof Error ? submitError.message : "Could not save");
       }
     });
   };
@@ -81,7 +81,7 @@ export function CreateEntityModal({
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="eyebrow">Crear</p>
+                  <p className="eyebrow">Create</p>
                   <h2 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">{title}</h2>
                   <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--muted-foreground)]">
                     {description}
@@ -109,11 +109,11 @@ export function CreateEntityModal({
 
                 <div className="soft-rule mt-6 flex flex-col gap-3 pt-5 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-sm text-[var(--muted-foreground)]">
-                    Mantiene el canvas limpio y deja el contexto principal visible hasta que decidas crear.
+                    Keeps the canvas clean and leaves the main context visible until you decide to create.
                   </p>
                   <div className="flex gap-3">
                     <Button type="button" variant="outline" className="rounded-full px-5" onClick={() => setOpen(false)}>
-                      Cancelar
+                      Cancel
                     </Button>
                     <Button type="submit" className="rounded-full px-5" disabled={isPending}>
                       {isPending ? pendingLabel : submitLabel}

@@ -68,7 +68,7 @@ function LinkSection({ label, entityType, resourceId, options, linked, isPending
         <div>
           <p className="eyebrow">{label}</p>
           <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-            Conecta este recurso con {label.toLowerCase()} para no perder contexto.
+            Connect this resource with {label.toLowerCase()} to maintain context.
           </p>
         </div>
         <span className="rounded-full border border-[var(--border)] px-2 py-1 text-[10px] uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
@@ -82,7 +82,7 @@ function LinkSection({ label, entityType, resourceId, options, linked, isPending
           onChange={(event) => setSelectedId(event.target.value)}
           className="w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-3 py-4 text-sm text-[var(--foreground)] outline-none"
         >
-          <option value="">Selecciona un item para vincular</option>
+          <option value="">Select an item to link</option>
           {availableOptions.map((option) => (
             <option key={option.id} value={option.id}>
               {option.title}
@@ -99,13 +99,13 @@ function LinkSection({ label, entityType, resourceId, options, linked, isPending
             setSelectedId("");
           }}
         >
-          {isPending ? "Guardando..." : "Vincular"}
+          {isPending ? "Linking..." : "Link"}
         </Button>
       </div>
 
       <div className="mt-4 space-y-2">
         {linked.length === 0 ? (
-          <p className="text-sm text-[var(--muted-foreground)]">Todavia no hay relaciones.</p>
+          <p className="text-sm text-[var(--muted-foreground)]">No connections yet.</p>
         ) : (
           linked.map((entity) => (
             <div key={`${resourceId}-${entityType}-${entity.id}`} className="flex items-center justify-between gap-3 rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-3">
@@ -123,7 +123,7 @@ function LinkSection({ label, entityType, resourceId, options, linked, isPending
                 disabled={isPending}
                 onClick={() => onRemove(entityType, entity.id)}
               >
-                Quitar
+                Remove
               </Button>
             </div>
           ))
@@ -155,7 +155,7 @@ export function EditResourceModal({
         formData.append("resource_id", resource.id);
         await linkResourceToEntityAction(formData);
       } catch (submitError) {
-        setLinkError(submitError instanceof Error ? submitError.message : "No se pudo vincular.");
+        setLinkError(submitError instanceof Error ? submitError.message : "Could not link.");
       }
     });
   };
@@ -171,7 +171,7 @@ export function EditResourceModal({
         formData.append("resource_id", resource.id);
         await unlinkResourceFromEntityAction(formData);
       } catch (submitError) {
-        setLinkError(submitError instanceof Error ? submitError.message : "No se pudo quitar el vinculo.");
+        setLinkError(submitError instanceof Error ? submitError.message : "Could not remove the link.");
       }
     });
   };
@@ -185,7 +185,7 @@ export function EditResourceModal({
       action={updateResourceAction}
       className="md:min-w-[560px]"
       triggerLabel={triggerLabel}
-      triggerTitle="Editar recurso"
+      triggerTitle="Edit resource"
       alwaysVisible={alwaysVisible}
       triggerClassName={triggerClassName}
     >
@@ -258,13 +258,13 @@ export function EditResourceModal({
             <div className="soft-rule mb-5 pt-5">
               <p className="eyebrow">Connections</p>
               <p className="mt-3 text-sm text-[var(--muted-foreground)]">
-                Desde aqui puedes conectar el recurso con proyectos, tareas, notas y decisiones sin salir del vault.
+                From here you can connect this resource with projects, tasks, notes, and decisions without leaving the vault.
               </p>
             </div>
 
             <div className="grid gap-4">
               <LinkSection
-                label="Proyectos"
+                label="Projects"
                 entityType="project"
                 resourceId={resource.id}
                 options={relationOptions.projects}
@@ -274,7 +274,7 @@ export function EditResourceModal({
                 onRemove={removeLink}
               />
               <LinkSection
-                label="Tareas"
+                label="Tasks"
                 entityType="task"
                 resourceId={resource.id}
                 options={relationOptions.tasks}
@@ -284,7 +284,7 @@ export function EditResourceModal({
                 onRemove={removeLink}
               />
               <LinkSection
-                label="Notas"
+                label="Notes"
                 entityType="note"
                 resourceId={resource.id}
                 options={relationOptions.notes}
@@ -294,7 +294,7 @@ export function EditResourceModal({
                 onRemove={removeLink}
               />
               <LinkSection
-                label="Decisiones"
+                label="Decisions"
                 entityType="decision"
                 resourceId={resource.id}
                 options={relationOptions.decisions}

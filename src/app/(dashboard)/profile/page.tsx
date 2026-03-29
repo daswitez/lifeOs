@@ -3,7 +3,7 @@ import { updateProfileAction } from "@/server/actions/lifeos";
 import { getProfileData } from "@/server/queries/lifeos";
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat("es-BO", {
+  return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -16,27 +16,27 @@ export default async function ProfilePage() {
   return (
     <div className="min-h-full px-5 py-6 sm:px-8 md:px-10 lg:px-12">
       <div className="mx-auto max-w-5xl">
-        <header className="panel-surface rounded-[32px] p-6 sm:p-8">
+        <header className="panel-surface rounded-[32px] p-6 sm:p-8 anim-fade-in-up">
           <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
             <div>
-              <div className="kicker-pill">Espacio personal</div>
-              <h1 className="title-balance mt-5 text-4xl font-semibold text-[var(--foreground)]">Perfil y preferencias</h1>
+              <div className="kicker-pill">Personal space</div>
+              <h1 className="title-balance mt-5 text-4xl font-semibold text-[var(--foreground)]">Profile & preferences</h1>
               <p className="mt-4 text-base leading-relaxed text-[var(--muted-foreground)]">
-                Ajusta identidad, zona horaria e idioma para que LifeOS se sienta realmente tuyo y no una instalacion generica.
+                Adjust identity, timezone, and language so LifeOS feels truly yours and not a generic install.
               </p>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-3 stagger">
               <article className="panel-quiet rounded-[26px] p-5">
                 <p className="eyebrow">Email</p>
                 <p className="mt-3 break-all text-sm font-medium text-[var(--foreground)]">{profile.email}</p>
               </article>
               <article className="panel-quiet rounded-[26px] p-5">
-                <p className="eyebrow">Creado</p>
+                <p className="eyebrow">Created</p>
                 <p className="mt-3 text-sm font-medium text-[var(--foreground)]">{formatDate(profile.createdAt)}</p>
               </article>
               <article className="panel-quiet rounded-[26px] p-5">
-                <p className="eyebrow">Actualizado</p>
+                <p className="eyebrow">Updated</p>
                 <p className="mt-3 text-sm font-medium text-[var(--foreground)]">{formatDate(profile.updatedAt)}</p>
               </article>
             </div>
@@ -46,12 +46,12 @@ export default async function ProfilePage() {
         <form action={updateProfileAction} className="panel-surface mt-8 rounded-[30px] p-6 sm:p-8">
           <div className="grid gap-4 md:grid-cols-2">
             <label className="block">
-              <span className="eyebrow">Nombre</span>
+              <span className="eyebrow">Name</span>
               <input
                 name="full_name"
                 defaultValue={profile.fullName}
-                placeholder="Como quieres verte dentro del sistema"
-                className="mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)] outline-none"
+                placeholder="How you want to appear inside the system"
+                className="input-ring mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)]"
               />
             </label>
 
@@ -60,8 +60,8 @@ export default async function ProfilePage() {
               <input
                 name="username"
                 defaultValue={profile.username}
-                placeholder="handle personal"
-                className="mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)] outline-none"
+                placeholder="personal handle"
+                className="input-ring mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)]"
               />
             </label>
 
@@ -71,7 +71,7 @@ export default async function ProfilePage() {
                 name="avatar_url"
                 defaultValue={profile.avatarUrl}
                 placeholder="https://..."
-                className="mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)] outline-none"
+                className="input-ring mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)]"
               />
             </label>
 
@@ -81,29 +81,29 @@ export default async function ProfilePage() {
                 name="bio"
                 rows={5}
                 defaultValue={profile.bio}
-                placeholder="Que areas de tu vida o de tu trabajo quieres que este sistema represente mejor?"
-                className="mt-3 w-full resize-none rounded-[24px] border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)] outline-none"
+                placeholder="What areas of your life or work do you want this system to best represent?"
+                className="input-ring mt-3 w-full resize-none rounded-[24px] border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)]"
               />
             </label>
 
             <label className="block">
-              <span className="eyebrow">Zona horaria</span>
+              <span className="eyebrow">Timezone</span>
               <input
                 name="timezone"
                 defaultValue={profile.timezone}
                 placeholder="America/La_Paz"
-                className="mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)] outline-none"
+                className="input-ring mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)]"
               />
             </label>
 
             <label className="block">
-              <span className="eyebrow">Idioma</span>
+              <span className="eyebrow">Language</span>
               <select
                 name="locale"
                 defaultValue={profile.locale}
-                className="mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-3 py-4 text-sm text-[var(--foreground)] outline-none"
+                className="input-ring mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-3 py-4 text-sm text-[var(--foreground)]"
               >
-                <option value="es">Espanol</option>
+                <option value="es">Spanish</option>
                 <option value="en">English</option>
               </select>
             </label>
@@ -120,10 +120,10 @@ export default async function ProfilePage() {
 
           <div className="soft-rule mt-8 flex flex-col gap-4 pt-5 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-[var(--muted-foreground)]">
-              Estos ajustes no cambian tu contenido, pero si como el sistema representa identidad, tiempos y contexto.
+              These settings don&apos;t change your content, but they do affect how the system represents identity, timing, and context.
             </p>
-            <SubmitButton pendingLabel="Guardando..." className="rounded-full px-5">
-              Guardar perfil
+            <SubmitButton pendingLabel="Saving..." className="rounded-full px-5">
+              Save profile
             </SubmitButton>
           </div>
         </form>

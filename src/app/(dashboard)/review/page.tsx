@@ -5,14 +5,14 @@ import { upsertWeeklyReviewAction } from "@/server/actions/lifeos";
 import { getReviewData } from "@/server/queries/lifeos";
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat("es-BO", {
+  return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
   }).format(new Date(value));
 }
 
 function formatLongDate(value: string) {
-  return new Intl.DateTimeFormat("es-BO", {
+  return new Intl.DateTimeFormat("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
@@ -30,35 +30,35 @@ export default async function ReviewPage() {
   return (
     <div className="min-h-full px-5 py-6 sm:px-8 md:px-10 lg:px-12">
       <div className="mx-auto max-w-6xl">
-        <header className="panel-surface rounded-[32px] p-6 sm:p-8">
+        <header className="panel-surface rounded-[32px] p-6 sm:p-8 anim-fade-in-up">
           <div className="grid gap-8 xl:grid-cols-[0.9fr_1.1fr]">
             <div>
-              <div className="kicker-pill">Entorno ceremonial</div>
+              <div className="kicker-pill">Ceremony space</div>
               <h1 className="title-balance mt-5 font-serif text-4xl text-[var(--foreground)]">Pause &amp; Calibrate</h1>
               <p className="mt-5 text-lg leading-relaxed text-[var(--muted-foreground)]">
-                La revision semanal no es una auditoria. Es donde juntas senales, limpias friccion y conviertes la semana en direccion operativa.
+                The weekly review isn&apos;t an audit. It&apos;s where you gather signals, remove friction, and convert the week into operational direction.
               </p>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-3 stagger">
               <article className="panel-quiet rounded-[28px] p-5">
-                <p className="eyebrow">Semana activa</p>
+                <p className="eyebrow">Active week</p>
                 <p className="mt-3 text-base font-semibold text-[var(--foreground)]">
                   {formatDate(data.currentWeek.weekStart)} - {formatDate(data.currentWeek.weekEnd)}
                 </p>
                 <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-                  {currentReview ? "Revision ya creada para este rango." : "Lista para cerrar con una sintesis real."}
+                  {currentReview ? "Review already created for this range." : "Ready to close with a real synthesis."}
                 </p>
               </article>
               <article className="panel-quiet rounded-[28px] p-5">
-                <p className="eyebrow">Mood promedio</p>
+                <p className="eyebrow">Avg mood</p>
                 <p className="mt-3 text-3xl font-semibold text-[var(--foreground)]">{formatScore(data.currentWeek.moodAverage)}</p>
-                <p className="mt-2 text-sm text-[var(--muted-foreground)]">{data.currentWeek.logs.length} registros diarios esta semana</p>
+                <p className="mt-2 text-sm text-[var(--muted-foreground)]">{data.currentWeek.logs.length} daily logs this week</p>
               </article>
               <article className="panel-quiet rounded-[28px] p-5">
-                <p className="eyebrow">Inbox + decisiones</p>
+                <p className="eyebrow">Inbox + decisions</p>
                 <p className="mt-3 text-3xl font-semibold text-[var(--foreground)]">{data.inboxCount + data.openDecisions}</p>
-                <p className="mt-2 text-sm text-[var(--muted-foreground)]">senales activas que deberian informar tu foco</p>
+                <p className="mt-2 text-sm text-[var(--muted-foreground)]">active signals that should inform your focus</p>
               </article>
             </div>
           </div>
@@ -71,23 +71,23 @@ export default async function ReviewPage() {
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <p className="eyebrow">Revision de la semana</p>
-                <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">Escribir y cerrar</h2>
+                <p className="eyebrow">Week review</p>
+                <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">Write & close</h2>
                 <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--muted-foreground)]">
-                  Rango actual: {formatLongDate(data.currentWeek.weekStart)} a {formatLongDate(data.currentWeek.weekEnd)}.
+                  Current range: {formatLongDate(data.currentWeek.weekStart)} to {formatLongDate(data.currentWeek.weekEnd)}.
                 </p>
               </div>
-              {currentReview ? <div className="kicker-pill">Actualizando revision</div> : <div className="kicker-pill">Nueva revision</div>}
+              {currentReview ? <div className="kicker-pill">Updating review</div> : <div className="kicker-pill">New review</div>}
             </div>
 
             <label className="mt-7 block text-xs uppercase tracking-[0.22em] text-[var(--muted-foreground)]">
-              Resumen de la semana
+              Week summary
               <textarea
                 name="summary"
                 rows={4}
                 defaultValue={currentReview?.summary ?? ""}
-                placeholder="Que paso de verdad esta semana? Que cambió, que pesó y que queda claro ahora?"
-                className="mt-3 w-full resize-none rounded-[24px] border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm normal-case tracking-normal text-[var(--foreground)] outline-none"
+                placeholder="What really happened this week? What changed, what weighed heavy, and what's clear now?"
+                className="input-ring mt-3 w-full resize-none rounded-[24px] border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm normal-case tracking-normal text-[var(--foreground)]"
               />
             </label>
 
@@ -98,41 +98,41 @@ export default async function ReviewPage() {
                   name="wins"
                   rows={5}
                   defaultValue={currentReview?.wins ?? ""}
-                  placeholder="Que salio bien y conviene seguir haciendo?"
-                  className="mt-3 w-full resize-none rounded-[24px] border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm normal-case tracking-normal text-[var(--foreground)] outline-none"
+                  placeholder="What went well and should keep going?"
+                  className="input-ring mt-3 w-full resize-none rounded-[24px] border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm normal-case tracking-normal text-[var(--foreground)]"
                 />
               </label>
               <label className="block text-xs uppercase tracking-[0.22em] text-[var(--muted-foreground)]">
-                Bloqueos
+                Blockers
                 <textarea
                   name="blockers"
                   rows={5}
                   defaultValue={currentReview?.blockers ?? ""}
-                  placeholder="Que friccion o cuellos de botella se repitieron?"
-                  className="mt-3 w-full resize-none rounded-[24px] border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm normal-case tracking-normal text-[var(--foreground)] outline-none"
+                  placeholder="What friction or bottlenecks kept repeating?"
+                  className="input-ring mt-3 w-full resize-none rounded-[24px] border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm normal-case tracking-normal text-[var(--foreground)]"
                 />
               </label>
             </div>
 
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               <label className="block text-xs uppercase tracking-[0.22em] text-[var(--muted-foreground)]">
-                Lecciones
+                Lessons
                 <textarea
                   name="lessons"
                   rows={5}
                   defaultValue={currentReview?.lessons ?? ""}
-                  placeholder="Que aprendiste sobre tu energia, tus sistemas o tu forma de decidir?"
-                  className="mt-3 w-full resize-none rounded-[24px] border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm normal-case tracking-normal text-[var(--foreground)] outline-none"
+                  placeholder="What did you learn about your energy, systems, or decision-making?"
+                  className="input-ring mt-3 w-full resize-none rounded-[24px] border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm normal-case tracking-normal text-[var(--foreground)]"
                 />
               </label>
               <label className="block text-xs uppercase tracking-[0.22em] text-[var(--muted-foreground)]">
-                Siguiente foco
+                Next focus
                 <textarea
                   name="next_focus"
                   rows={5}
                   defaultValue={currentReview?.next_focus ?? ""}
-                  placeholder="Que merece energia la proxima semana y que NO deberia competir con eso?"
-                  className="mt-3 w-full resize-none rounded-[24px] border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm normal-case tracking-normal text-[var(--foreground)] outline-none"
+                  placeholder="What deserves energy next week and what should NOT compete with it?"
+                  className="input-ring mt-3 w-full resize-none rounded-[24px] border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm normal-case tracking-normal text-[var(--foreground)]"
                 />
               </label>
             </div>
@@ -147,25 +147,25 @@ export default async function ReviewPage() {
                 <p className="mt-2 text-sm text-[var(--foreground)]">{formatScore(data.currentWeek.focusAverage)}</p>
               </div>
               <div className="panel-quiet rounded-2xl p-4">
-                <p className="eyebrow">Wins registrados</p>
+                <p className="eyebrow">Recorded wins</p>
                 <p className="mt-2 text-sm text-[var(--foreground)]">{data.currentWeek.winsCount}</p>
               </div>
             </div>
 
             <div className="soft-rule mt-6 flex flex-col gap-4 pt-5 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm text-[var(--muted-foreground)]">
-                {currentReview ? "Guardar actualiza la revision de esta semana." : "Guardar crea la revision de esta semana y conserva sus metricas agregadas."}
+                {currentReview ? "Saving will update this week's review." : "Saving will create this week's review and preserve its aggregated metrics."}
               </p>
-              <SubmitButton pendingLabel="Guardando..." className="rounded-full px-5">
-                Guardar review <ChevronRight className="h-3 w-3" />
+              <SubmitButton pendingLabel="Saving..." className="rounded-full px-5">
+                Save review <ChevronRight className="h-3 w-3" />
               </SubmitButton>
             </div>
           </form>
 
           <div className="space-y-6">
             <section className="panel-surface rounded-[30px] p-6">
-              <p className="eyebrow">Senales del sistema</p>
-              <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">Contexto para escribir</h2>
+              <p className="eyebrow">System signals</p>
+              <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">Writing context</h2>
 
               <div className="mt-6 grid gap-3 md:grid-cols-3">
                 <article className="panel-quiet rounded-2xl p-4">
@@ -173,11 +173,11 @@ export default async function ReviewPage() {
                   <p className="mt-2 text-2xl font-semibold text-[var(--foreground)]">{data.inboxCount}</p>
                 </article>
                 <article className="panel-quiet rounded-2xl p-4">
-                  <p className="eyebrow">Proyectos activos</p>
+                  <p className="eyebrow">Active projects</p>
                   <p className="mt-2 text-2xl font-semibold text-[var(--foreground)]">{data.activeProjects}</p>
                 </article>
                 <article className="panel-quiet rounded-2xl p-4">
-                  <p className="eyebrow">Decisiones abiertas</p>
+                  <p className="eyebrow">Open decisions</p>
                   <p className="mt-2 text-2xl font-semibold text-[var(--foreground)]">{data.openDecisions}</p>
                 </article>
               </div>
@@ -185,14 +185,14 @@ export default async function ReviewPage() {
               <div className="mt-6 space-y-4">
                 <div>
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-semibold text-[var(--foreground)]">Tareas que siguen vivas</p>
+                    <p className="text-sm font-semibold text-[var(--foreground)]">Tasks still alive</p>
                     <Link href="/actions" className="text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-                      abrir acciones
+                      open actions
                     </Link>
                   </div>
                   <div className="mt-3 space-y-2">
                     {data.focusTasks.length === 0 ? (
-                      <p className="text-sm text-[var(--muted-foreground)]">No hay tareas abiertas prioritarias ahora mismo.</p>
+                      <p className="text-sm text-[var(--muted-foreground)]">No open priority tasks right now.</p>
                     ) : (
                       data.focusTasks.map((task) => (
                         <div key={task.id} className="panel-quiet rounded-2xl p-4">
@@ -209,14 +209,14 @@ export default async function ReviewPage() {
 
                 <div>
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-semibold text-[var(--foreground)]">Proyectos activos</p>
+                    <p className="text-sm font-semibold text-[var(--foreground)]">Active projects</p>
                     <Link href="/projects" className="text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-                      abrir proyectos
+                      open projects
                     </Link>
                   </div>
                   <div className="mt-3 space-y-2">
                     {data.activeProjectList.length === 0 ? (
-                      <p className="text-sm text-[var(--muted-foreground)]">No hay proyectos activos ahora mismo.</p>
+                      <p className="text-sm text-[var(--muted-foreground)]">No active projects right now.</p>
                     ) : (
                       data.activeProjectList.map((project) => (
                         <div key={project.id} className="panel-quiet rounded-2xl p-4">
@@ -233,20 +233,20 @@ export default async function ReviewPage() {
 
                 <div>
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-semibold text-[var(--foreground)]">Decisiones abiertas</p>
+                    <p className="text-sm font-semibold text-[var(--foreground)]">Open decisions</p>
                     <Link href="/decisions" className="text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
-                      abrir decisiones
+                      open decisions
                     </Link>
                   </div>
                   <div className="mt-3 space-y-2">
                     {data.openDecisionList.length === 0 ? (
-                      <p className="text-sm text-[var(--muted-foreground)]">No hay decisiones abiertas por revisar.</p>
+                      <p className="text-sm text-[var(--muted-foreground)]">No open decisions to review.</p>
                     ) : (
                       data.openDecisionList.map((decision) => (
                         <div key={decision.id} className="panel-quiet rounded-2xl p-4">
                           <p className="text-sm font-medium text-[var(--foreground)]">{decision.title}</p>
                           <p className="mt-1 text-xs uppercase tracking-[0.16em] text-[var(--muted-foreground)]">
-                            {decision.reviewDate ? `review ${formatDate(decision.reviewDate)}` : "sin fecha de review"}
+                            {decision.reviewDate ? `review ${formatDate(decision.reviewDate)}` : "no review date"}
                           </p>
                         </div>
                       ))
@@ -257,13 +257,13 @@ export default async function ReviewPage() {
             </section>
 
             <section className="panel-surface rounded-[30px] p-6">
-              <p className="eyebrow">Ritmo reciente</p>
-              <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">Ultimos check-ins diarios</h2>
+              <p className="eyebrow">Recent rhythm</p>
+              <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">Recent daily check-ins</h2>
 
               <div className="mt-6 space-y-4">
                 {data.recentDailyLogs.length === 0 && (
                   <p className="rounded-2xl border border-dashed border-[var(--border)] p-5 text-sm text-[var(--muted-foreground)]">
-                    Cuando empieces a registrar mood, foco y wins, esta vista se vuelve una memoria de patrones.
+                    Once you start logging mood, focus, and wins, this view becomes a memory of patterns.
                   </p>
                 )}
 
@@ -276,7 +276,7 @@ export default async function ReviewPage() {
                       </span>
                     </div>
                     <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">
-                      {log.wins || log.reflections || "Sin notas narrativas todavia."}
+                      {log.wins || log.reflections || "No narrative notes yet."}
                     </p>
                   </article>
                 ))}
@@ -286,13 +286,13 @@ export default async function ReviewPage() {
         </section>
 
         <section className="mt-10 panel-surface rounded-[30px] p-6">
-          <p className="eyebrow">Historial</p>
-          <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">Revisiones guardadas</h2>
+          <p className="eyebrow">History</p>
+          <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">Saved reviews</h2>
 
           <div className="mt-6 grid gap-4 lg:grid-cols-2">
             {data.reviews.length === 0 && (
               <p className="rounded-2xl border border-dashed border-[var(--border)] p-5 text-sm text-[var(--muted-foreground)]">
-                Aun no hay revisiones semanales creadas. Este formulario ya deja cerrar ese loop desde la app.
+                No weekly reviews created yet. This form already lets you close that loop from the app.
               </p>
             )}
 
@@ -302,7 +302,7 @@ export default async function ReviewPage() {
                   {formatDate(review.week_start)} - {formatDate(review.week_end)}
                 </p>
                 <p className="mt-3 text-sm leading-relaxed text-[var(--foreground)]/85">
-                  {review.summary || review.next_focus || review.wins || "Revision creada sin resumen aun."}
+                  {review.summary || review.next_focus || review.wins || "Review created without a summary yet."}
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
                   <span className="rounded-full border border-[var(--border)] px-2 py-1">mood {formatScore(review.mood_avg)}</span>

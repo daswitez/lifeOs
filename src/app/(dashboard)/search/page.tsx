@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 import { getGlobalSearchData, type SearchScope } from "@/server/queries/lifeos";
 
 const SEARCH_SCOPES: Array<{ value: SearchScope; label: string }> = [
-  { value: "all", label: "Todo" },
-  { value: "tasks", label: "Tareas" },
-  { value: "projects", label: "Proyectos" },
-  { value: "notes", label: "Notas" },
-  { value: "resources", label: "Recursos" },
-  { value: "decisions", label: "Decisiones" },
+  { value: "all", label: "All" },
+  { value: "tasks", label: "Tasks" },
+  { value: "projects", label: "Projects" },
+  { value: "notes", label: "Notes" },
+  { value: "resources", label: "Resources" },
+  { value: "decisions", label: "Decisions" },
   { value: "areas", label: "Areas" },
 ];
 
@@ -27,15 +27,15 @@ function normalizeSearchParam(value: string | string[] | undefined) {
 function sectionLabel(type: Exclude<SearchScope, "all">) {
   switch (type) {
     case "tasks":
-      return "Tareas";
+      return "Tasks";
     case "projects":
-      return "Proyectos";
+      return "Projects";
     case "notes":
-      return "Notas";
+      return "Notes";
     case "resources":
-      return "Recursos";
+      return "Resources";
     case "decisions":
-      return "Decisiones";
+      return "Decisions";
     case "areas":
       return "Areas";
   }
@@ -66,36 +66,36 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   return (
     <div className="min-h-full px-5 py-6 sm:px-8 md:px-10 lg:px-12">
       <div className="mx-auto max-w-6xl">
-        <header className="panel-surface rounded-[32px] p-6 sm:p-8">
+        <header className="panel-surface rounded-[32px] p-6 sm:p-8 anim-fade-in-up">
           <div className="grid gap-8 xl:grid-cols-[0.92fr_1.08fr]">
             <div>
-              <div className="kicker-pill">Busqueda global</div>
-              <h1 className="title-balance mt-5 text-4xl font-semibold text-[var(--foreground)]">Encuentra contexto rapido</h1>
+              <div className="kicker-pill">Global search</div>
+              <h1 className="title-balance mt-5 text-4xl font-semibold text-[var(--foreground)]">Find context fast</h1>
               <p className="mt-4 text-base leading-relaxed text-[var(--muted-foreground)]">
-                Busca una sola vez y recupera tareas, proyectos, notas, recursos, decisiones y areas sin recordar en que modulo lo guardaste.
+                Search once and retrieve tasks, projects, notes, resources, decisions, and areas without remembering which module holds them.
               </p>
             </div>
 
             <form className="panel-quiet rounded-[28px] p-5" method="get">
               <label className="block">
-                <span className="eyebrow">Que estas buscando?</span>
-                <div className="mt-3 flex items-center gap-3 rounded-[24px] border border-[var(--border)] bg-[var(--background)] px-4 py-3">
+                <span className="eyebrow">What are you looking for?</span>
+                <div className="mt-3 flex items-center gap-3 rounded-[24px] border border-[var(--border)] bg-[var(--background)] px-4 py-3 transition-all focus-within:border-[var(--ring)] focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_18%,transparent)]">
                   <Search className="h-4 w-4 text-[var(--muted-foreground)]" />
                   <input
                     name="q"
                     defaultValue={q}
-                    placeholder="ej. odisea, review, lifeos, salud, waiting..."
+                    placeholder="e.g. odyssey, review, lifeos, health, waiting..."
                     className="w-full bg-transparent text-sm text-[var(--foreground)] outline-none"
                   />
                 </div>
               </label>
 
               <label className="mt-4 block">
-                <span className="eyebrow">Tipo</span>
+                <span className="eyebrow">Type</span>
                 <select
                   name="scope"
                   defaultValue={scope}
-                  className="mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-3 py-4 text-sm text-[var(--foreground)] outline-none"
+                  className="input-ring mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-3 py-4 text-sm text-[var(--foreground)]"
                 >
                   {SEARCH_SCOPES.map((item) => (
                     <option key={item.value} value={item.value}>
@@ -107,13 +107,13 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
               <div className="mt-5 flex gap-3">
                 <Button type="submit" className="rounded-full px-5">
-                  Buscar
+                  Search
                 </Button>
                 <Link
                   href="/search"
                   className="inline-flex items-center justify-center rounded-full border border-[var(--border)] px-5 text-sm text-[var(--muted-foreground)] transition-colors hover:border-[var(--foreground)] hover:text-[var(--foreground)]"
                 >
-                  Limpiar
+                  Clear
                 </Link>
               </div>
             </form>
@@ -123,19 +123,19 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         <section className="mt-8 panel-surface rounded-[30px] p-6">
           {!q ? (
             <div className="rounded-[24px] border border-dashed border-[var(--border)] p-6 text-sm text-[var(--muted-foreground)]">
-              Escribe una palabra, proyecto, decision o tema para explorar todo el sistema desde un solo punto.
+              Type a word, project, decision, or topic to explore the entire system from a single point.
             </div>
           ) : data.total === 0 ? (
             <div className="rounded-[24px] border border-dashed border-[var(--border)] p-6 text-sm text-[var(--muted-foreground)]">
-              No encontramos resultados para <span className="text-[var(--foreground)]">{q}</span>. Prueba otro termino o cambia el filtro de tipo.
+              No results found for <span className="text-[var(--foreground)]">{q}</span>. Try a different term or change the type filter.
             </div>
           ) : (
             <div className="space-y-8">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="eyebrow">Resultados</p>
+                  <p className="eyebrow">Results</p>
                   <h2 className="mt-2 text-2xl font-semibold text-[var(--foreground)]">
-                    {data.total} coincidencia{data.total === 1 ? "" : "s"} para &quot;{q}&quot;
+                    {data.total} match{data.total === 1 ? "" : "es"} for &quot;{q}&quot;
                   </h2>
                 </div>
               </div>
@@ -149,7 +149,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                     <div className="flex items-center justify-between gap-3">
                       <p className="text-sm font-semibold text-[var(--foreground)]">{sectionLabel(group)}</p>
                       <span className="text-[10px] uppercase tracking-[0.2em] text-[var(--muted-foreground)]">
-                        {items.length} resultado{items.length === 1 ? "" : "s"}
+                        {items.length} result{items.length === 1 ? "" : "s"}
                       </span>
                     </div>
 
@@ -158,7 +158,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                         <Link
                           key={`${item.type}-${item.id}`}
                           href={item.href}
-                          className="panel-quiet rounded-[24px] p-5 transition-all hover:-translate-y-0.5 hover:border-[var(--foreground)]/20"
+                          className="panel-quiet rounded-[24px] p-5 transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]"
                         >
                           <div className="flex items-center justify-between gap-3">
                             <p className="text-sm font-semibold text-[var(--foreground)]">{item.title}</p>

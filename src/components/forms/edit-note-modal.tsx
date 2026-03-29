@@ -36,7 +36,7 @@ export function EditNoteModal({
       action={updateNoteAction}
       className="md:min-w-[560px]"
       triggerLabel={triggerLabel}
-      triggerTitle="Editar nota"
+      triggerTitle="Edit note"
       alwaysVisible={alwaysVisible}
       triggerClassName={triggerClassName}
     >

@@ -46,7 +46,7 @@ export function ResourceRowEditButton({ resource, relationOptions }: ResourceRow
         notes: resource.linkedNotes ?? [],
         decisions: resource.linkedDecisions ?? [],
       }}
-      triggerLabel="Editar"
+      triggerLabel="Edit"
       alwaysVisible
       triggerClassName="h-8 px-3 py-0 text-[11px] tracking-[0.08em] uppercase"
     />

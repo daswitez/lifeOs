@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import { Inter, Lora } from "next/font/google";
 import "./globals.css";
 
-// Fuente Sans Serif para Cockpit (Alta legibilidad UI)
+// Primary sans-serif for the cockpit UI (high legibility)
 const fontSans = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
 });
 
-// Fuente Serif Secundaria para Zettelkasten y Lectura Profunda (Vibe Editorial)
+// Secondary serif for Zettelkasten and deep-reading contexts (editorial vibe)
 const fontSerif = Lora({
   variable: "--font-serif",
   subsets: ["latin"],
@@ -17,7 +17,7 @@ const fontSerif = Lora({
 
 export const metadata: Metadata = {
   title: "LifeOS | Personal Cockpit",
-  description: "Sistema Nervioso Central para Acción y Conocimiento",
+  description: "Central nervous system for action and knowledge",
 };
 
 export default function RootLayout({
@@ -27,18 +27,15 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="es"
-      // El antialiased es mandatorio para "limpiar borde" de fuentes
+      lang="en"
       className={`${fontSans.variable} ${fontSerif.variable} antialiased h-full`}
     >
-      {/* 
-        El body es la pantalla principal. Flex row asume un layout maestro
-        tipo "Sidebar Ocultable + Canvas Central".
+      {/*
+        The body is the main viewport. Flex row assumes a master layout
+        of "Collapsible Sidebar + Central Canvas".
       */}
       <body className="min-h-full flex overflow-hidden bg-[var(--background)] text-[var(--foreground)] w-full">
-        {/* Placeholder para barra lateral persistente - Se separará a cliente / RSC futuro */}
-        
-        {/* Lienzo Principal con padding muy generoso para "el aire cognitivo" */}
+        {/* Main canvas with generous padding for "cognitive air" */}
         <main className="flex-1 w-full relative overflow-y-auto">
           {children}
         </main>

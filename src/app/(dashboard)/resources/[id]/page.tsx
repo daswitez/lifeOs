@@ -6,7 +6,7 @@ import { getResourceDetailData } from "@/server/queries/lifeos";
 import { EditResourceModal } from "@/components/forms/edit-resource-modal";
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat("es-BO", {
+  return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -127,7 +127,7 @@ export default async function ResourceDetailPage({ params }: { params: Promise<{
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] px-4 py-2 text-sm text-[var(--foreground)] transition-colors hover:bg-[var(--accent-soft)]"
               >
-                Abrir archivo
+                Open file
                 <Download className="h-4 w-4" />
               </a>
             )}
@@ -157,7 +157,7 @@ export default async function ResourceDetailPage({ params }: { params: Promise<{
             </div>
           ) : (
             <p className="mt-4 text-sm text-[var(--muted-foreground)]">
-              No hay preview embebida para este recurso. Si es interno, puedes abrirlo desde el vault.
+              No embedded preview for this resource. If it's internal, you can open it from the vault.
             </p>
           )}
         </section>
@@ -184,7 +184,7 @@ export default async function ResourceDetailPage({ params }: { params: Promise<{
                   rel="noreferrer"
                   className="inline-flex items-center gap-2 text-sm text-[var(--foreground)] underline-offset-4 hover:underline"
                 >
-                  Descargar o abrir desde storage
+                  Download or open from storage
                   <Download className="h-4 w-4" />
                 </a>
               )}

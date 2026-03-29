@@ -115,7 +115,7 @@ export function ManageNoteRelationsModal({
                   <p className="eyebrow">Knowledge graph lite</p>
                   <h2 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">{noteTitle}</h2>
                   <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--muted-foreground)]">
-                    Conecta esta nota con otras ideas para que el conocimiento no quede aislado en una sola ficha.
+                    Connect this note with other ideas so knowledge doesn't stay isolated in a single card.
                   </p>
                 </div>
                 <button
@@ -135,7 +135,7 @@ export function ManageNoteRelationsModal({
                       onChange={(event) => setSelectedNoteId(event.target.value)}
                       className="w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-3 py-4 text-sm text-[var(--foreground)] outline-none"
                     >
-                      <option value="">Selecciona otra nota</option>
+                      <option value="">Select another note</option>
                       {availableNotes.map((note) => (
                         <option key={note.id} value={note.id}>
                           {note.title} · {NOTE_TYPE_LABELS[note.type]}
@@ -156,7 +156,7 @@ export function ManageNoteRelationsModal({
                     </select>
 
                     <Button type="button" className="rounded-full px-5" onClick={attachRelation} disabled={!selectedNoteId || isPending}>
-                      {isPending ? "Guardando..." : "Conectar"}
+                      {isPending ? "Saving..." : "Connect"}
                     </Button>
                   </div>
 
@@ -169,7 +169,7 @@ export function ManageNoteRelationsModal({
                   <div className="space-y-3">
                     {relations.length === 0 && (
                       <div className="panel-quiet rounded-2xl p-5 text-sm text-[var(--muted-foreground)]">
-                        Aun no hay relaciones entre esta nota y otras.
+                        No connections between this note and others yet.
                       </div>
                     )}
 
@@ -178,7 +178,7 @@ export function ManageNoteRelationsModal({
                         <div className="min-w-0">
                           <p className="truncate text-sm font-medium text-[var(--foreground)]">{relation.note.title}</p>
                           <p className="mt-1 truncate text-xs text-[var(--muted-foreground)]">
-                            {relation.direction === "outgoing" ? "saliente" : "entrante"} · {RELATION_KIND_LABELS[relation.relation]} · {NOTE_TYPE_LABELS[relation.note.type]}
+                            {relation.direction === "outgoing" ? "outgoing" : "incoming"} · {RELATION_KIND_LABELS[relation.relation]} · {NOTE_TYPE_LABELS[relation.note.type]}
                           </p>
                         </div>
                         <Button
@@ -190,7 +190,7 @@ export function ManageNoteRelationsModal({
                           disabled={isPending}
                         >
                           <Trash2 className="mr-1 h-3.5 w-3.5" />
-                          Quitar
+                          Remove
                         </Button>
                       </div>
                     ))}

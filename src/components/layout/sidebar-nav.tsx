@@ -48,12 +48,12 @@ const NAV_ITEMS: NavItem[] = [
 
 const MOBILE_ITEMS: NavLink[] = [
   { icon: LayoutDashboard, label: "Home", href: "/" },
-  { icon: Search, label: "Buscar", href: "/search" },
+  { icon: Search, label: "Search", href: "/search" },
   { icon: Inbox, label: "Inbox", href: "/inbox" },
   { icon: CheckSquare, label: "Actions", href: "/actions" },
   { icon: Layers, label: "Areas", href: "/areas" },
   { icon: FolderKanban, label: "Projects", href: "/projects" },
-  { icon: CircleUserRound, label: "Perfil", href: "/profile" },
+  { icon: CircleUserRound, label: "Profile", href: "/profile" },
 ];
 
 function isActivePath(pathname: string, href: string) {
@@ -81,7 +81,7 @@ export function SidebarNav({
 
   return (
     <>
-      <aside className="hidden h-full min-h-0 w-72 shrink-0 border-r border-[var(--border)] bg-[color:color-mix(in_srgb,var(--surface-strong)_88%,transparent)] px-4 pb-6 pt-8 backdrop-blur-xl md:flex md:flex-col">
+      <aside className="hidden h-full min-h-0 w-72 shrink-0 border-r border-[color:color-mix(in_srgb,var(--border)_70%,transparent)] bg-[color:color-mix(in_srgb,var(--surface-strong)_88%,transparent)] px-4 pb-6 pt-8 backdrop-blur-xl md:flex md:flex-col">
         <div className="mb-10 shrink-0 px-2">
           <div className="flex items-center justify-between">
             <div>
@@ -91,15 +91,15 @@ export function SidebarNav({
               </h1>
             </div>
             <div className="flex items-center gap-3">
-              <div className="h-2.5 w-2.5 rounded-full bg-[var(--accent)] shadow-[0_0_20px_rgba(28,63,54,0.45)]" />
+              <div className="h-2.5 w-2.5 rounded-full bg-[var(--accent-primary)] shadow-[0_0_16px_color-mix(in_srgb,var(--accent-primary)_40%,transparent)] anim-pulse-soft" />
               <Link
                 href="/profile"
-                aria-label="Abrir perfil"
+                aria-label="Open profile"
                 className={cn(
-                  "inline-flex h-11 w-11 items-center justify-center rounded-full border transition-colors",
+                  "inline-flex h-11 w-11 items-center justify-center rounded-full border transition-all duration-200",
                   isActivePath(pathname, "/profile")
-                    ? "border-[var(--foreground)] bg-[var(--foreground)] text-[var(--background)] shadow-[var(--shadow-card)]"
-                    : "border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--foreground)] hover:text-[var(--foreground)]"
+                    ? "border-[var(--accent-primary)] bg-[var(--accent-primary)] text-[var(--accent-primary-foreground)] shadow-[var(--shadow-card)]"
+                    : "border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--accent-primary)] hover:text-[var(--foreground)]"
                 )}
               >
                 <CircleUserRound className="h-5 w-5" />
@@ -109,10 +109,10 @@ export function SidebarNav({
         </div>
 
         <nav className="min-h-0 flex-1 overflow-y-auto pr-1">
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1">
           {items.map((item, idx) => {
             if ("divider" in item) {
-              return <div key={`divider-${idx}`} className="my-3 h-px bg-[color:color-mix(in_srgb,var(--border)_70%,transparent)]" />;
+              return <div key={`divider-${idx}`} className="my-3 h-px bg-[color:color-mix(in_srgb,var(--border)_60%,transparent)]" />;
             }
 
             const active = isActivePath(pathname, item.href);
@@ -124,7 +124,7 @@ export function SidebarNav({
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "group flex items-center justify-between rounded-2xl px-3 py-3 text-sm transition-all",
+                  "group relative flex items-center justify-between rounded-2xl px-3 py-2.5 text-sm transition-all duration-200",
                   active
                     ? "bg-[var(--foreground)] text-[var(--background)] shadow-[var(--shadow-card)]"
                     : "text-[var(--muted-foreground)] hover:bg-[var(--accent-soft)]/70 hover:text-[var(--foreground)]"
@@ -133,7 +133,7 @@ export function SidebarNav({
                 <div className="flex items-center gap-3">
                   <Icon
                     className={cn(
-                      "h-4 w-4",
+                      "h-4 w-4 transition-colors",
                       active
                         ? "text-[var(--background)]"
                         : "text-[var(--muted-foreground)] group-hover:text-[var(--foreground)]"
@@ -147,7 +147,7 @@ export function SidebarNav({
                       "rounded-full px-2 py-0.5 text-[10px] font-bold",
                       active
                         ? "bg-[color:color-mix(in_srgb,var(--background)_18%,transparent)] text-[var(--background)]"
-                        : "bg-[var(--foreground)] text-[var(--background)]"
+                        : "bg-[var(--accent-primary)] text-[var(--accent-primary-foreground)]"
                     )}
                   >
                     {item.count}
@@ -158,12 +158,13 @@ export function SidebarNav({
           })}
           </div>
         </nav>
-        <div className="mt-6 shrink-0 rounded-[24px] border border-[var(--border)] bg-[var(--accent-soft)]/30 p-4">
+
+        <div className="mt-6 shrink-0 rounded-[24px] border border-[color:color-mix(in_srgb,var(--border)_70%,transparent)] bg-[var(--accent-soft)]/20 p-4">
           <p className="text-sm font-medium text-[var(--foreground)]">
-            {profile.fullName || profile.username || "Tu espacio"}
+            {profile.fullName || profile.username || "Your space"}
           </p>
           <p className="mt-1 truncate text-xs text-[var(--muted-foreground)]">
-            {profile.email || "Sin email visible"}
+            {profile.email || "No email visible"}
           </p>
 
           <div className="mt-4 flex gap-2">
@@ -172,7 +173,7 @@ export function SidebarNav({
               className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--muted-foreground)] transition-colors hover:border-[var(--foreground)] hover:text-[var(--foreground)]"
             >
               <Settings className="h-3.5 w-3.5" />
-              Perfil
+              Profile
             </Link>
             <form action={logoutAction}>
               <button
@@ -180,7 +181,7 @@ export function SidebarNav({
                 className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--muted-foreground)] transition-colors hover:border-[var(--foreground)] hover:text-[var(--foreground)]"
               >
                 <LogOut className="h-3.5 w-3.5" />
-                Salir
+                Sign out
               </button>
             </form>
           </div>
@@ -199,7 +200,7 @@ export function SidebarNav({
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex min-h-[60px] flex-col items-center justify-center rounded-2xl px-1 text-[10px] font-medium transition-all",
+                  "flex min-h-[60px] flex-col items-center justify-center rounded-2xl px-1 text-[10px] font-medium transition-all duration-200",
                   active
                     ? "bg-[var(--foreground)] text-[var(--background)]"
                     : "text-[var(--muted-foreground)]"

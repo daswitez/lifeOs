@@ -8,7 +8,7 @@ import { ManageResourceLinksModal } from "@/components/forms/manage-resource-lin
 import { ManageNoteRelationsModal } from "@/components/forms/manage-note-relations-modal";
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat("es-BO", {
+  return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -64,7 +64,7 @@ export default async function NoteDetailPage({ params }: { params: Promise<{ id:
                   isArchived: data.note.isArchived,
                 }}
                 projects={data.projects}
-                triggerLabel="Editar nota"
+                triggerLabel="Edit note"
                 alwaysVisible
                 triggerClassName="h-9 px-4 py-0 text-[11px] tracking-[0.08em] uppercase"
               />
@@ -152,7 +152,7 @@ export default async function NoteDetailPage({ params }: { params: Promise<{ id:
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-sm font-medium text-[var(--foreground)]">{relation.note.title}</p>
                   <span className="text-[10px] uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
-                    {relation.direction === "outgoing" ? "saliente" : "entrante"}
+                    {relation.direction === "outgoing" ? "outgoing" : "incoming"}
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-[var(--muted-foreground)]">

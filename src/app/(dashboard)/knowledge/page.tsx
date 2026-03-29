@@ -6,7 +6,7 @@ import { getKnowledgeData } from "@/server/queries/lifeos";
 import Link from "next/link";
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat("es-BO", {
+  return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
   }).format(new Date(value));
@@ -17,52 +17,52 @@ export default async function KnowledgePage() {
 
   return (
     <div className="min-h-full bg-[var(--muted)]/10 px-5 py-6 pb-24 sm:px-8 md:px-10 lg:px-12">
-      <header className="panel-surface rounded-[32px] p-6 sm:p-8">
+      <header className="panel-surface rounded-[32px] p-6 sm:p-8 anim-fade-in-up">
         <div className="grid gap-6 xl:grid-cols-[0.75fr_1.25fr]">
           <div>
-            <div className="kicker-pill">Biblioteca personal</div>
+            <div className="kicker-pill">Personal library</div>
             <h1 className="title-balance mt-5 font-serif text-4xl font-semibold text-[var(--foreground)]">Zettelkasten</h1>
             <p className="mt-4 text-base text-[var(--muted-foreground)]">
-              Captura ideas, destila notas y manten a mano lo que vale la pena reutilizar.
+              Capture ideas, distill notes, and keep within reach what&apos;s worth reusing.
             </p>
           </div>
 
           <div className="panel-quiet flex flex-col justify-between rounded-[28px] p-5">
             <div>
-              <p className="eyebrow">Nueva nota</p>
+              <p className="eyebrow">New note</p>
               <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
-                Composer editorial
+                Editorial composer
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">
-                Abrimos una pantalla de creación para que la biblioteca siga viéndose como biblioteca y no como formulario.
+                A dedicated creation screen so the library keeps looking like a library, not a form.
               </p>
             </div>
 
             <div className="mt-6">
               <CreateEntityModal
-                title="Nueva nota"
-                description="Captura una idea, extracto o insight con suficiente contexto para que luego puedas destilarla."
-                triggerLabel="Nueva nota"
-                submitLabel="Guardar nota"
-                pendingLabel="Guardando..."
+                title="New note"
+                description="Capture an idea, excerpt, or insight with enough context to distill it later."
+                triggerLabel="New note"
+                submitLabel="Save note"
+                pendingLabel="Saving..."
                 action={createNoteAction}
               >
                 <div className="grid gap-4 md:grid-cols-2">
                   <label className="block">
-                    <span className="eyebrow">Titulo</span>
+                    <span className="eyebrow">Title</span>
                     <input
                       name="title"
                       required
-                      placeholder="Titulo de la nota"
-                      className="mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)] outline-none"
+                      placeholder="Note title"
+                      className="input-ring mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)]"
                     />
                   </label>
                   <label className="block">
-                    <span className="eyebrow">Tipo</span>
+                    <span className="eyebrow">Type</span>
                     <select
                       name="type"
                       defaultValue="plain"
-                      className="mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-3 py-4 text-sm text-[var(--foreground)] outline-none"
+                      className="input-ring mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-3 py-4 text-sm text-[var(--foreground)]"
                     >
                       {NOTE_TYPES.map((type) => (
                         <option key={type} value={type}>
@@ -72,20 +72,20 @@ export default async function KnowledgePage() {
                     </select>
                   </label>
                   <label className="block md:col-span-2">
-                    <span className="eyebrow">Resumen</span>
+                    <span className="eyebrow">Summary</span>
                     <input
                       name="summary"
-                      placeholder="Resumen breve"
-                      className="mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)] outline-none"
+                      placeholder="Brief summary"
+                      className="input-ring mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)]"
                     />
                   </label>
                   <label className="block md:col-span-2">
-                    <span className="eyebrow">Contenido</span>
+                    <span className="eyebrow">Content</span>
                     <textarea
                       name="content"
                       rows={6}
-                      placeholder="Escribe una idea, insight o extracto..."
-                      className="mt-3 w-full rounded-[24px] border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)] outline-none resize-none"
+                      placeholder="Write an idea, insight, or excerpt..."
+                      className="input-ring mt-3 w-full rounded-[24px] border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)] resize-none"
                     />
                   </label>
                 </div>
@@ -96,7 +96,7 @@ export default async function KnowledgePage() {
       </header>
 
       <div className="mx-auto max-w-4xl pt-8">
-        <div className="space-y-8">
+        <div className="space-y-8 stagger">
           {data.notes.map((note) => (
             <article key={note.id} className="panel-surface group rounded-[30px] p-6">
               <div className="flex items-center justify-between gap-3">
@@ -107,7 +107,7 @@ export default async function KnowledgePage() {
                   {(note.relationCount ?? 0) > 0 && (
                     <>
                       <span className="rounded-full border border-[var(--border)] px-2 py-1 text-[10px] uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
-                        {note.relationCount} conexiones
+                        {note.relationCount} connections
                       </span>
                       <span className="rounded-full border border-[var(--border)] px-2 py-1 text-[10px] uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
                         {note.outgoingCount} out · {note.incomingCount} in
@@ -136,7 +136,7 @@ export default async function KnowledgePage() {
                     isArchived: note.isArchived ?? false,
                   }}
                   projects={data.projects}
-                  triggerLabel="Editar"
+                  triggerLabel="Edit"
                   alwaysVisible
                   triggerClassName="h-8 px-3 py-0 text-[11px] tracking-[0.08em] uppercase font-sans"
                 />

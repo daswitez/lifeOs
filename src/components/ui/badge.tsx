@@ -13,7 +13,7 @@ function Badge({ className, variant = "default", ...props }: BadgeProps) {
     secondary: "bg-[var(--accent-soft)] text-[var(--foreground)]",
     outline: "text-[var(--foreground)] border border-[var(--border)]",
     destructive: "bg-red-500/10 text-red-600 border border-red-500/20",
-    knowledge: "bg-blue-500/10 text-blue-600 border border-blue-500/20 font-serif italic" // Toque editorial
+    knowledge: "bg-blue-500/10 text-blue-600 border border-blue-500/20 font-serif italic" // Editorial touch
   }
 
   return (

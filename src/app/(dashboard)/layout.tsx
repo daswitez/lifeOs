@@ -11,10 +11,11 @@ export default function DashboardLayout({
       <Sidebar />
 
       <main className="relative flex-1 overflow-y-auto">
+        {/* Ambient glow — subtle depth cue */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute inset-x-0 top-0 h-64 bg-[var(--glow)]" />
-          <div className="absolute left-[10%] top-20 h-40 w-40 rounded-full bg-[color:color-mix(in_srgb,var(--accent)_10%,transparent)] blur-3xl" />
-          <div className="absolute bottom-24 right-[12%] h-48 w-48 rounded-full bg-[color:color-mix(in_srgb,var(--foreground)_6%,transparent)] blur-3xl" />
+          <div className="absolute inset-x-0 top-0 h-72 bg-[var(--glow)] opacity-80" />
+          <div className="absolute left-[8%] top-16 h-36 w-36 rounded-full bg-[color:color-mix(in_srgb,var(--accent-primary)_6%,transparent)] blur-[80px]" />
+          <div className="absolute bottom-20 right-[10%] h-44 w-44 rounded-full bg-[color:color-mix(in_srgb,var(--foreground)_4%,transparent)] blur-[80px]" />
         </div>
 
         <div className="glass-header sticky top-0 z-30 flex items-center justify-between px-5 py-3 md:hidden">

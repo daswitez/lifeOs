@@ -7,7 +7,7 @@ import { getResourcesData } from "@/server/queries/lifeos";
 import Link from "next/link";
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat("es-BO", {
+  return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
   }).format(new Date(value));
@@ -44,54 +44,54 @@ export default async function ResourcesPage() {
 
   return (
     <div className="min-h-full px-5 py-6 pb-24 sm:px-8 md:px-10 lg:px-12">
-      <header className="panel-surface rounded-[32px] p-6 sm:p-8">
+      <header className="panel-surface rounded-[32px] p-6 sm:p-8 anim-fade-in-up">
         <div className="grid gap-6 xl:grid-cols-[0.78fr_1.22fr]">
           <div>
-            <div className="kicker-pill">Media y referencias</div>
+            <div className="kicker-pill">Media & references</div>
             <h1 className="title-balance mt-5 text-4xl font-semibold text-[var(--foreground)]">Resources Vault</h1>
             <p className="mt-4 text-base text-[var(--muted-foreground)]">
-              Guarda links, PDFs y materiales sin inflar el ruido del sistema.
+              Save links, PDFs, and materials without inflating system noise.
             </p>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="panel-quiet flex flex-col justify-between rounded-[28px] p-5">
               <div>
-                <p className="eyebrow">Nuevo recurso</p>
+                <p className="eyebrow">New resource</p>
                 <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
-                  Composer de referencia
+                  Reference composer
                 </h2>
                 <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">
-                  Crear va en modal para que la tabla siga siendo la estructura principal de lectura.
+                  Creation opens in a modal so the table remains the primary reading structure.
                 </p>
               </div>
 
               <div className="mt-6">
                 <CreateEntityModal
-                  title="Nuevo recurso"
-                  description="Guarda una referencia con tipo, storage y una ubicacion clara para que luego no tengas que adivinar que era."
-                  triggerLabel="Nuevo recurso"
-                  submitLabel="Guardar recurso"
-                  pendingLabel="Guardando..."
+                  title="New resource"
+                  description="Save a reference with type, storage, and a clear location so you don't have to guess later."
+                  triggerLabel="New resource"
+                  submitLabel="Save resource"
+                  pendingLabel="Saving..."
                   action={createResourceAction}
                 >
                   <div className="grid gap-4 md:grid-cols-2">
                     <label className="block">
-                      <span className="eyebrow">Titulo</span>
+                      <span className="eyebrow">Title</span>
                       <input
                         name="title"
                         required
-                        placeholder="Titulo del recurso"
-                        className="mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)] outline-none"
+                        placeholder="Resource title"
+                        className="input-ring mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)]"
                       />
                     </label>
                     <label className="block">
-                      <span className="eyebrow">Ubicacion</span>
+                      <span className="eyebrow">Location</span>
                       <input
                         name="location"
                         required
-                        placeholder="URL o ruta interna"
-                        className="mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)] outline-none"
+                        placeholder="URL or internal path"
+                        className="input-ring mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)]"
                       />
                     </label>
                     <label className="block">
@@ -99,7 +99,7 @@ export default async function ResourcesPage() {
                       <select
                         name="storage_mode"
                         defaultValue="external"
-                        className="mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-3 py-4 text-sm text-[var(--foreground)] outline-none"
+                        className="input-ring mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-3 py-4 text-sm text-[var(--foreground)]"
                       >
                         {STORAGE_MODES.map((mode) => (
                           <option key={mode} value={mode}>
@@ -109,11 +109,11 @@ export default async function ResourcesPage() {
                       </select>
                     </label>
                     <label className="block">
-                      <span className="eyebrow">Tipo</span>
+                      <span className="eyebrow">Type</span>
                       <select
                         name="type"
                         defaultValue="link"
-                        className="mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-3 py-4 text-sm text-[var(--foreground)] outline-none"
+                        className="input-ring mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-3 py-4 text-sm text-[var(--foreground)]"
                       >
                         {RESOURCE_TYPES.map((type) => (
                           <option key={type} value={type}>
@@ -123,11 +123,11 @@ export default async function ResourcesPage() {
                       </select>
                     </label>
                     <label className="block md:col-span-2">
-                      <span className="eyebrow">Descripcion</span>
+                      <span className="eyebrow">Description</span>
                       <input
                         name="description"
-                        placeholder="Para que lo guardas?"
-                        className="mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)] outline-none"
+                        placeholder="Why are you saving this?"
+                        className="input-ring mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)]"
                       />
                     </label>
                   </div>
@@ -137,27 +137,27 @@ export default async function ResourcesPage() {
 
             <div className="panel-quiet flex flex-col justify-between rounded-[28px] p-5">
               <div>
-                <p className="eyebrow">Subida interna</p>
+                <p className="eyebrow">Internal upload</p>
                 <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
                   Vault uploader
                 </h2>
                 <p className="mt-3 text-sm leading-relaxed text-[var(--muted-foreground)]">
-                  Sube PDFs, imagenes, audio o video al sistema y deja listo el preview sin salir de LifeOS.
+                  Upload PDFs, images, audio, or video to the system and preview them without leaving LifeOS.
                 </p>
               </div>
 
               <div className="mt-6">
                 <CreateEntityModal
-                  title="Subir archivo"
-                  description="Guarda un archivo dentro del vault. El sistema inferira el tipo, registrara metadata util y, si el bucket existe, dejara preview directa para medios compatibles."
-                  triggerLabel="Subir archivo"
-                  submitLabel="Subir al vault"
-                  pendingLabel="Subiendo..."
+                  title="Upload file"
+                  description="Store a file inside the vault. The system will infer type, record useful metadata, and enable direct preview for compatible media."
+                  triggerLabel="Upload file"
+                  submitLabel="Upload to vault"
+                  pendingLabel="Uploading..."
                   action={createUploadedResourceAction}
                 >
                   <div className="grid gap-4">
                     <label className="block">
-                      <span className="eyebrow">Archivo</span>
+                      <span className="eyebrow">File</span>
                       <input
                         name="file"
                         type="file"
@@ -166,19 +166,19 @@ export default async function ResourcesPage() {
                       />
                     </label>
                     <label className="block">
-                      <span className="eyebrow">Titulo opcional</span>
+                      <span className="eyebrow">Title (optional)</span>
                       <input
                         name="title"
-                        placeholder="Si lo dejas vacio, usamos el nombre del archivo"
-                        className="mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)] outline-none"
+                        placeholder="Leave empty to use the filename"
+                        className="input-ring mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)]"
                       />
                     </label>
                     <label className="block">
-                      <span className="eyebrow">Descripcion</span>
+                      <span className="eyebrow">Description</span>
                       <input
                         name="description"
-                        placeholder="Que contiene o para que te servira?"
-                        className="mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)] outline-none"
+                        placeholder="What does it contain or what will it serve for?"
+                        className="input-ring mt-3 w-full rounded-2xl border border-[var(--border)] bg-[var(--background)] px-4 py-4 text-sm text-[var(--foreground)]"
                       />
                     </label>
                   </div>
@@ -192,14 +192,14 @@ export default async function ResourcesPage() {
       <div className="pt-8">
         <div className="panel-surface overflow-hidden rounded-[30px]">
           <div className="grid grid-cols-12 gap-4 border-b border-[var(--border)] bg-[var(--muted)]/40 p-4 text-[10px] uppercase tracking-[0.25em] text-[var(--muted-foreground)]">
-            <div className="col-span-6 md:col-span-5">Titulo</div>
-            <div className="col-span-2 hidden md:block">Tipo</div>
+            <div className="col-span-6 md:col-span-5">Title</div>
+            <div className="col-span-2 hidden md:block">Type</div>
             <div className="col-span-3 hidden md:block">Storage</div>
-            <div className="col-span-6 md:col-span-2 text-right">Alta</div>
+            <div className="col-span-6 md:col-span-2 text-right">Added</div>
           </div>
 
           {data.resources.map((resource) => (
-            <article key={resource.id} className="group grid grid-cols-12 gap-4 border-b border-[var(--border)] p-4 last:border-none hover:bg-[var(--accent-soft)]/40">
+            <article key={resource.id} className="group grid grid-cols-12 gap-4 border-b border-[var(--border)] p-4 last:border-none transition-colors hover:bg-[var(--accent-soft)]/40">
               <div className="col-span-6 md:col-span-5 flex items-center gap-3">
                 <div className="text-[var(--muted-foreground)]">{iconForType(resource.type)}</div>
                 <div className="min-w-0">
